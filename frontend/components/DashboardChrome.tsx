@@ -158,6 +158,27 @@ export function DashboardChrome({ children }: { children: React.ReactNode }) {
                 <span className="material-symbols-outlined text-[20px]">payments</span>
                 <span>Hóa đơn Thu ngân</span>
               </Link>
+
+              <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] px-4 py-2 mt-4 opacity-60">
+                Kiểm soát ra vào
+              </div>
+              <Link href="/dashboard/face-enrollment" className={linkClass("/dashboard/face-enrollment")}>
+                <span className="material-symbols-outlined text-[20px]">face</span>
+                <span>Đăng ký khuôn mặt</span>
+              </Link>
+              <Link href="/dashboard/access-logs" className={linkClass("/dashboard/access-logs")}>
+                <span className="material-symbols-outlined text-[20px]">door_sensor</span>
+                <span>Nhật ký cổng ra vào</span>
+              </Link>
+              <a
+                href="/kiosk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e1e9] dark:hover:bg-slate-800 rounded-xl transition-all duration-200 font-medium text-sm"
+              >
+                <span className="material-symbols-outlined text-[20px]">photo_camera_front</span>
+                <span>Mở cổng kiosk ↗</span>
+              </a>
             </>
           )}
 
