@@ -28,6 +28,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { MailModule } from './modules/mail/mail.module';
 import { VnpayModule } from './modules/vnpay/vnpay.module';
+import { FaceRecognitionModule } from './modules/face-recognition/face-recognition.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { VnpayModule } from './modules/vnpay/vnpay.module';
     DocumentsModule,
     MailModule,
     VnpayModule,
+    FaceRecognitionModule,
   ],
   controllers: [AppController],
   providers: [
