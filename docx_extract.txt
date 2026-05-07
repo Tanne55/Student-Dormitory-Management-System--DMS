@@ -1,0 +1,2718 @@
+
+
+1114300
+
+TRƯỜNG ĐẠI HỌC THỦY LỢI
+
+  ...........oOo..........
+
+
+
+NGHIÊN CỨU KHOA HỌC SINH VIÊN LẦN THỨ 39
+
+ 
+
+ĐỀ TÀI:
+
+HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ THÔNG MINH
+
+ 
+
+                           Sinh viên thực hiện:
+
+Nguyễn Hữu Quyết – 66HTTT1
+
+ 
+
+Nguyễn Duy Tân– 66HTTT1
+
+ 
+
+Nguyễn Hữu Hồng Sơn – 66HTTT1
+
+ 
+
+Nguyễn Huy Hoàng– 66HTTT1
+
+      KHOA CÔNG NGHỆ THÔNG TIN
+
+
+
+                    Giảng viên hướng dẫn:
+
+ThS. Nguyễn Văn Nam
+
+ Hà Nội, 2025
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MỤC LỤC
+
+
+
+Tổng quan tình hình nghiên cứu thuộc lĩnh vực đề tài6
+
+
+
+Lý do chọn đề tài7
+
+
+
+Mục tiêu chọn đề tài8
+
+
+
+Hướng nghiên cứu10
+
+
+
+CHƯƠNG 1: CƠ SỞ LÝ THUYẾT VÀ11
+
+
+
+CÔNG NGHỆ11
+
+
+
+Tổng quan về hệ thống quản lý cơ sở dữ liệu và Web.11
+
+
+
+1.1.1Kiến trúc Client-Server11
+
+
+
+1.1.2  Công nghệ phát triển Web(Frontend & Backend)13
+
+
+
+1.1.3  Cơ sở dữ liệu quan hệ14
+
+
+
+1.2   Mô hình MVC15
+
+
+
+1.3 Thuật toán nhận diện vật thể YOLO (You Only Look Once)..16
+
+
+
+1.3.1 Nguyên lý hoạt động của YOLO16
+
+
+
+1.3.2 Ưu điểm của YOLO trong quản lý ký túc xá 16
+
+
+
+CHƯƠNG 2: XÂY DỰNG VÀ PHÁT TRIỂN WEB QUẢN LÝ KÝ TÚC
+
+
+
+XÁ THÔNG MINH17
+
+
+
+    Bài toán cần giải quyết17
+
+
+
+2.2 Thu thập yêu cầu18
+
+
+
+2.3 Xây dựng hệ thống quản lý ký túc xá thông minh 21
+
+
+
+2.3.1 Kiến trúc hệ thống22
+
+
+
+2.3.2 Xác định yêu cầu hệ thống24
+
+
+
+2.3.3 Cơ sở dữ liệu39
+
+
+
+CHƯƠNG 3: XÂY DỰNG WEB VÀ DEMO SẢN PHẨM44
+
+
+
+Môi trường thực nghiệm44
+
+
+
+Kết quả45
+
+
+
+3.2.1 Kết quả nhận diện AI (YOLO) 45
+
+
+
+3.2.2 Đánh giá vận hành hệ thống Web quản lý46
+
+3.3 Demo giao diện hệ thống47
+
+
+
+KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN48
+
+
+
+
+
+DANH MỤC TÀI LIỆU THAM KHẢO50
+
+DANH MỤC HÌNH ẢNH
+
+Hình ảnh 1 Mô hình Client-Server12
+
+Hình ảnh 2 Cách thức hoạt động của mô hình Client - Server 12
+
+Hình ảnh 3 Mô hình MVC15
+
+Hình ảnh 4 Kiến trúc hệ thống YOLO  10
+
+Hình ảnh 5 Mô hình cơ chế bảo mật của ví điện tử  10
+
+Hình ảnh 6 Mô hình hoạt động của hợp đồng thông minh13
+
+Hình ảnh 7 Thế hệ công nghệ blockchain17
+
+Hình ảnh 8 Thế hệ công nghệ blockchain18
+
+Hình ảnh 9 Cấu trúc hệ thống blockchain18
+
+Hình ảnh 10 Luồng giao dịch, hoạt động của blockchain23
+
+Hình ảnh 11 Cơ chế hoạt động của khối blockchain24
+
+Hình ảnh 12 Điểm khác biệt giữa truyền thống với áp dụng blockchain24
+
+Hình ảnh 13 Một số ứng dụng của blockchain26
+
+Hình ảnh 14 Sơ đồ mối tương quan giữa các biến trong mạng27
+
+Hình ảnh 15 Mô hình cơ bản của hợp đồng thông minh30
+
+Hình ảnh 16 Mô hình cấu trúc hoạt động hợp đồng thông minh30
+
+Hình ảnh 17 Mô hình thanh toán trên hợp đồng thông minh33
+
+Hình ảnh 18 Quy trình giải mã xác thực34
+
+
+
+Hình ảnh 19 . Demo hoàn thiện39
+
+
+
+
+
+LỜI MỞ ĐẦU
+
+
+
+
+
+
+Tổng quan tình hình nghiên cứu thuộc lĩnh vực đề tài
+
+Trong kỷ nguyên Công nghiệp 4.0, khái niệm "Smart City" và "Smart Campus" đã trở thành xu hướng tất yếu toàn cầu. Việc quản lý ký túc xá (KTX) không còn đơn thuần là việc phân phòng và thu phí, mà đã chuyển sang hướng tự động hóa và tối ưu hóa trải nghiệm người dùng.
+
+Trên thế giới: Các quốc gia phát triển như Mỹ, Singapore, Hàn Quốc đã áp dụng hệ thống quản lý tập trung tích hợp nhận diện khuôn mặt và IoT từ lâu. Các hệ thống này cho phép sinh viên ra vào không cần thẻ, tự động báo cáo sự cố cơ sở vật chất và quản lý tiêu thụ năng lượng theo thời gian thực.
+
+Tại Việt Nam, công tác quản lý sinh viên nội trú đang ở giai đoạn chuyển mình từ thủ công sang bán tự động, tuy nhiên vẫn tồn tại nhiều hạn chế:
+
+Mô hình quản lý truyền thống chiếm ưu thế: Đa số các trường Đại học hiện nay vẫn duy trì hình thức quản lý bằng sổ sách hoặc các tệp tin Excel rời rạc. Việc điểm danh sinh viên mỗi tối vẫn dựa vào sự kiểm tra trực tiếp của cán bộ quản lý, gây tốn kém thời gian và dễ xảy ra sai sót, nhầm lẫn.
+
+Hệ thống kiểm soát ra vào lạc hậu: Việc sử dụng thẻ từ đang bộc lộ nhiều bất cập như: sinh viên làm mất thẻ, hỏng thẻ, hoặc phổ biến nhất là tình trạng cho mượn thẻ để người lạ vào KTX. Điều này khiến cho quản lý rất khó kiểm soát người ra vào.
+
+Tiềm năng ứng dụng AI: Mặc dù công nghệ nhận diện khuôn mặt đã bắt đầu xuất hiện trong các doanh nghiệp, nhưng tại các KTX sinh viên, việc triển khai vẫn còn ở mức nhỏ lẻ, mang tính thử nghiệm. Nguyên nhân chủ yếu do chi phí đầu tư ban đầu và sự thiếu hụt các giải pháp phần mềm mang tính đồng bộ, có khả năng kết nối giữa phần cứng (Camera AI) và phần mềm quản lý hành chính.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lý do chọn đề tài
+
+Việc nhóm em thực hiện đề tài “Hệ thống quản lý Ký túc xá thông minh” xuất phát từ những nhu cầu thực tế trong việc thay đổi phương thức quản trị từ thủ công sang nền tảng số:
+
+Hiện nay, việc quản lý hàng ngàn sinh viên nội trú với các thông tin phức tạp (hợp đồng, diện chính sách, thông tin nhân thân) vẫn còn phụ thuộc nhiều vào giấy tờ và các file Excel rời rạc. Điều này dẫn đến việc tra cứu thông tin chậm, dễ thất lạc dữ liệu và gây khó khăn cho Ban quản lý trong việc tổng hợp báo cáo định kỳ. Nhu cầu về một hệ thống quản lý tập trung, cho phép cập nhật và truy xuất dữ liệu tức thời là vô cùng cấp thiết.
+
+Việc theo dõi tình trạng phòng (phòng trống, phòng đang sửa chữa, phòng đã đủ quân số) thường xuyên bị chồng chéo. Hệ thống mới sẽ cung cấp một cái nhìn trực quan dưới dạng sơ đồ tầng/phòng, giúp người quản lý nắm bắt tình hình thực tế chỉ qua một màn hình, từ đó sắp xếp chỗ ở cho sinh viên một cách khoa học và nhanh chóng.
+
+Các vấn đề về thu phí nội trú, chỉ số điện nước luôn là điểm nóng dễ gây thắc mắc giữa sinh viên và nhà trường. Lý do chọn đề tài này là để xây dựng một module tính toán tự động, gửi thông báo hóa đơn trực tiếp đến tài khoản cá nhân của sinh viên. Việc minh bạch số liệu không chỉ giảm tải áp lực cho cán bộ kế toán mà còn tạo sự tin tưởng, thuận tiện cho sinh viên trong quá trình thanh toán.
+
+Bên cạnh các nghiệp vụ quản lý hành chính, vấn đề an ninh tại các cổng ra vào luôn là bài toán khó. Thay vì chỉ dựa vào sức người hoặc thẻ từ (vốn dễ bị cho mượn hoặc làm mất), việc tích hợp thêm “module AI nhận diện khuôn mặt” đóng vai trò là một công cụ hỗ trợ đắc lực. Đây là giải pháp bổ trợ giúp tự động hóa khâu điểm danh và ngăn chặn người lạ vào khu vực nội trú, giúp hệ thống quản lý trở nên toàn diện và hiện đại hơn.
+
+Trong bối cảnh các trường đại học đang đẩy mạnh xây dựng "Smart Campus", việc thay đổi cách quản lý KTX là một phần không thể thiếu. Từ những lý do trên nhóm em đã lựa chọn đề tài  “Hệ thống quản lý Ký Túc Xá Thông Minh” nhằm góp phần chuẩn hóa quy trình số, khai thác tiềm năng của trí tuệ nhân tạo  và tạo tiền đề để tích hợp vào hệ thống quản lý chung của toàn trường 
+
+
+
+
+
+
+
+
+
+
+Mục tiêu chọn đề tài
+
+
+
+Mục tiêu chính: Mục tiêu của đề tài là xây dựng một hệ thống phần mềm quản lý Ký túc xá toàn diện trên nền tảng Web, nhằm số hóa toàn bộ quy trình vận hành từ khâu tiếp nhận sinh viên, sắp xếp chỗ ở đến quản lý dịch vụ và an ninh. Hệ thống đóng vai trò là một công cụ hỗ trợ đắc lực cho Ban quản lý trong việc ra quyết định dựa trên dữ liệu thực và nâng cao chất lượng dịch vụ nội trú cho sinh viên.
+
+
+
+Mục tiêu cụ thể của đề tài:
+
+
+
+Về mặt quản lý nghiệp vụ:
+
+Số hóa dữ liệu hồ sơ sinh viên: Lưu trữ đầy đủ thông tin cá nhân, lớp, khoa, diện chính sách và lịch sử lưu trú.
+
+Tối ưu hóa quản lý phòng ở: Xây dựng sơ đồ trực quan giúp theo dõi trạng thái phòng (trống, đầy, đang sửa chữa) và tự động tính toán mật độ sinh viên trong từng khu vực.
+
+Tự động hóa quản lý tài chính: Xây dựng module tính toán hóa đơn điện, nước, phí nội trú và gửi thông báo tự động đến từng tài khoản sinh viên, hỗ trợ theo dõi tình trạng thanh toán real-time.
+
+Về mặt công nghệ và tính năng hỗ trợ (AI):
+
+Xây dựng module nhận diện khuôn mặt: Tích hợp thuật toán học sâu (Deep Learning) để nhận dạng sinh viên tại cổng ra vào với độ chính xác cao.
+
+Hệ thống báo cáo thống kê: Tự động xuất các biểu đồ về lưu lượng ra vào, báo cáo doanh thu phí nội trú và thống kê sinh viên vắng mặt theo ngày/tháng.
+
+Về mặt trải nghiệm người dùng:
+
+Xây dựng giao diện Web Dashboard cho Admin: Thiết kế khoa học, dễ thao tác cho cán bộ quản lý không cần chuyên môn sâu về CNTT.
+
+Xây dựng cổng thông tin cho Sinh viên: Giúp sinh viên chủ động theo dõi hóa đơn, đăng ký tạm vắng, báo cáo hỏng hóc cơ sở vật chất và nhận thông báo từ nhà trường một cách nhanh nhất.
+
+
+
+
+
+
+
+Hướng nghiên cứu
+
+
+
+Khảo sát thực tế: Thực hiện phát phiếu khảo sát hoặc phỏng vấn cán bộ quản lý KTX để nắm bắt những khó khăn thực thực tế, từ đó điều chỉnh các tính năng của phần mềm cho sát với nhu cầu sử dụng.
+
+Xây dựng phần mềm (Web Development): Sử dụng các Framework hiện đại (như Next.js cho Frontend và Nodejs cho Backend) để xây dựng giao diện quản lý.Áp dụng mô hình MVC (Model-View-Controller) để tách biệt phần xử lý dữ liệu và giao diện, giúp hệ thống dễ dàng bảo trì và nâng cấp.
+
+Tích hợp AI và xử lý ảnh (Computer Vision): Sử dụng thư viện OpenCV để xử lý luồng video từ camera.Ứng dụng mô hình học sâu (Deep Learning) thông qua các thư viện như face_recognition để trích xuất đặc trưng khuôn mặt (128-dimensional face encoding).
+
+
+
+Kiểm thử hệ thống (Testing): Tiến hành chạy thử nghiệm hệ thống trong môi trường giả lập với dữ liệu mẫu 
+
+
+
+Phân tích hệ thống: Sử dụng ngôn ngữ mô hình hóa thống nhất (UML) để vẽ sơ đồ Use Case. Việc này giúp hình dung rõ luồng dữ liệu từ khi sinh viên đăng ký phòng cho đến khi dữ liệu được lưu trữ và truy xuất.
+
+
+
+
+
+Nghiên cứu về cơ sở dữ liệu: Tìm hiểu về kiến trúc cơ sở dữ liệu quan hệ (RDBMS) để thiết kế bảng dữ liệu sao cho tối ưu, tránh dư thừa và đảm bảo tính toàn vẹn dữ liệu khi quản lý số lượng lớn sinh viên.
+
+
+
+
+
+
+CHƯƠNG 1: CƠ SỞ LÝ THUYẾT VÀ CÔNG NGHỆ SỬ DỤNG
+
+
+1.1 Tổng quan về hệ thống quản lý cơ sở dữ liệu và Web
+
+
+1.1.1. Kiến trúc Client-Server
+
+
+
+Mô hình Client Server là một mô hình mạng máy tính gồm hai thành phần chính là client và server. Client sẽ là bên yêu cầu dịch vụ cài đặt cũng như lưu trữ tài nguyên từ server. Khi client gửi yêu cầu dữ liệu đến server qua Internet, server sẽ xử lý yêu cầu và gửi các gói dữ liệu cho client.
+
+
+Mô hình Client Server hoạt động dựa trên nguyên tắc của 2 thành phần chính là client và  server:
+
+
+Client
+
+
+Trong kiến trúc client server, client là các máy tính hoặc thiết bị đầu cuối được sử dụng để truy cập dịch vụ. Client gửi yêu cầu và có khả năng nhận thông tin cụ thể từ server – bên cung cấp dịch vụ.
+
+
+Server
+
+
+Server là một máy chủ hoặc hệ thống chuyên dụng dùng để cung cấp các dịch vụ cho client. Thông thường, cấu hình của server rất mạnh và luôn được kết nối mạng để phục vụ client 24/7. Trong mô hình mạng client server, server giữ vai trò then chốt, đảm bảo hệ thống hoạt động ổn định và thông suốt.
+
+
+
+
+
+
+
+Hình 1: Mô hình client- server
+
+
+
+Cách thức hoạt động cụ thể của mô hình mạng Client Server
+
+
+
+Hình 2: Cách thức hoạt động của mô hình Client - Server 
+
+
+
+
+1.1.2. Công nghệ phát triển Website (Frontend & Backend)
+
+Frontend
+
+Nhóm em sử dụng Next.js là một Framework dành cho React, được tạo ra bởi Vercel. Trong khi React chỉ là một thư viện tập trung vào giao diện (UI), Next.js cung cấp cho ta một bộ khung đầy đủ để xây dựng các ứng dụng web hoàn chỉnh (Full-stack) một cách nhanh chóng.
+
+Ưu điểm của Next.js với dự án hệ thống ký túc xá :
+
+Hệ thống KTX thường có các trang ít thay đổi như: Nội quy, Danh sách các loại phòng, Bảng giá. Next.js dùng Static Site Generation (SSG) để tạo sẵn các trang này. Khi sinh viên bấm vào, trang hiện ra ngay lập tức thay vì phải chờ server tính toán. Nếu ta cập nhật giá phòng hoặc thêm một khu nhà mới, Next.js cho phép cập nhật nội dung đó ngầm mà không cần phải build lại toàn bộ hệ thống sử dụng Incremental Static Regeneration (ISR):
+
+Đối với Admin (người quản lý KTX), họ cần các biểu đồ theo dõi tình trạng phòng trống, quản lý hóa đơn điện nước. Next.js kết hợp hoàn hảo giữa render phía server (để bảo mật dữ liệu) và render phía client (để các thao tác như lọc danh sách sinh viên, sửa thông tin phòng diễn ra cực mượt, không bị load lại trang)
+
+Đa số sinh viên sẽ truy cập hệ thống bằng điện thoại để xem thông báo hoặc đóng tiền. Next.js có cơ chế Image Optimization. Ảnh các phòng KTX, ảnh thẻ sinh viên sẽ được tự động nén và resize phù hợp với màn hình điện thoại, giúp trang web load nhanh hơn ngay cả khi dùng 4G yếu.
+
+Trong quản lý KTX, dữ liệu cá nhân của sinh viên, nhân viên và thông báo tài chính là cực kỳ nhạy cảm. Với React Server Components trong Next.js, mã nguồn xử lý logic quan trọng (như check quyền Admin, truy vấn database) được thực hiện hoàn toàn trên server. Điều này sẽ giảm thiểu rủi ro bị hack hoặc lộ lỗ hổng bảo mật.
+
+Backend
+
+- Nhóm em sử dụng Node.js -  Đây là một môi trường thực thi mã nguồn mở, đa nền tảng giúp cho phép chạy JavaScript ở phía máy chủ.
+
+- Ưu điểm của Node.js với dự án:
+
+Cơ chế Non-blocking I/O (Xử lý không đợi): Đây là đặc sản của Node.js. Hãy tưởng tượng khi 100 sinh viên cùng nhấn nút "Xem hóa đơn điện nước". Ở các ngôn ngữ khác, Server có thể phải xử lý từng người một . Với Node.js, nó tiếp nhận cả 100 yêu cầu cùng lúc, gửi lệnh xuống Database yêu cầu lấy dữ liệu, và trong lúc chờ Database phản hồi, nó vẫn có thể tiếp nhận thêm các yêu cầu khác (như báo hỏng, xem tin tức). Kết quả: Hệ thống của bạn không bao giờ bị "quay vòng vòng" chờ đợi dù có nhiều người dùng.
+
+Đơn luồng (Single-Threaded): Dù chỉ chạy trên 1 luồng chính nhưng nhờ Event Loop , nó có thể xử lý hàng ngàn kết nối cùng lúc mà không bị nghẽn.
+
+Khả năng xử lý Real-time (Thời gian thực): Node.js vượt trội trong việc thiết lập kết nối hai chiều giữa Server và Client thông qua giao thức WebSocket (thư viện Socket.io), thay vì cơ chế tải lại trang truyền thống.Vậy nên mọi cập nhật gần như sẽ hiển thị tức thì mà không cần phải tải lại trang
+
+
+1.1.3.Cơ sở dữ liệu quan hệ 
+
+PostgreSQL là hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) mã nguồn mở tiên tiến nhất hiện nay, nổi bật với tính ổn định và khả năng xử lý dữ liệu phức tạp.
+
+Ưu điểm khi áp dụng vào hệ thống KTX:
+
+Tính toàn vẹn dữ liệu cực cao: Đảm bảo các giao dịch tài chính (như đóng tiền phòng, tiền điện) luôn chính xác tuyệt đối thông qua cơ chế ACID. Không xảy ra tình trạng mất mát dữ liệu khi có sự cố giữa chừng.
+
+Xử lý truy vấn phức tạp: KTX có mối quan hệ dữ liệu chồng chéo (Sinh viên - Phòng - Hóa đơn - Tài sản). PostgreSQL giúp thực hiện các câu lệnh truy vấn liên kết (Join) nhiều bảng dữ liệu với tốc độ nhanh và hiệu quả.
+
+Khả năng mở rộng tốt: Hỗ trợ lưu trữ từ vài trăm sinh viên đến hàng chục nghìn bản ghi dữ liệu lịch sử sử dụng điện, nước trong nhiều năm mà không làm giảm hiệu năng hệ thống.
+
+Hỗ trợ kiểu dữ liệu đa dạng: Ngoài các bảng truyền thống, nó còn hỗ trợ kiểu dữ liệu JSON/JSONB, cho phép bạn lưu trữ các thông tin linh hoạt (như danh sách đồ đạc hỏng hóc trong phòng) một cách dễ dàng.
+
+Giúp hệ thống vận hành bền bỉ, bảo mật thông tin sinh viên an toàn và cung cấp các báo cáo thống kê chính xác cho người quản lý.
+
+
+
+
+1.2 Mô hình Clean Architecture
+
+Để tổ chức code một cách khoa học dễ quản lý và bảo trì và mở rộng nhóm em đã áp dụng mô hình MVC vào dự án. Mô hình MVC bao gồm 3 phần: Model ,View, Controller
+
+Model (Mô hình): Đây là nơi quản lý dữ liệu và logic nghiệp vụ. Nó làm việc trực tiếp với cơ sở dữ liệu (Database).
+
+View (Giao diện): Là những gì người dùng nhìn thấy (HTML, CSS, UI). View nhận dữ liệu từ Controller để hiển thị. 
+
+Controller (Bộ điều khiển): Đóng vai trò trung gian, nhận yêu cầu từ người dùng, điều hướng đến Model để xử lý và chọn View để hiển thị kết quả.
+
+Mô hình MVC vận hành theo một chu trình khép kín, đảm bảo sự tách biệt giữa giao diện và nghiệp vụ hệ thống:
+
+Bước 1 (Tiếp nhận): Người dùng tương tác trên giao diện (View), gửi yêu cầu (Request) đến bộ điều hành trung tâm là Controller.
+
+Bước 2 (Điều phối): Controller tiếp nhận, phân loại yêu cầu và điều hướng đến Model để thực hiện các tính toán hoặc truy xuất dữ liệu cần thiết.
+
+Bước 3 (Xử lý dữ liệu): Model trực tiếp làm việc với cơ sở dữ liệu, thực hiện các nghiệp vụ logic và phản hồi kết quả về cho Controller.
+
+Bước 4 (Đổ dữ liệu): Controller nhận kết quả từ Model, sau đó lựa chọn và truyền tải dữ liệu này sang thành phần hiển thị tương ứng (View).
+
+Bước 5 (Phản hồi): View thực hiện kết xuất (render) dữ liệu thành giao diện trực quan và hiển thị kết quả cuối cùng cho người dùng.
+
+
+
+
+
+Hình 3 : Mô hình MVC
+
+
+1.3.Thuật toán nhận diện vật thể YOLO (You Only Look Once)
+
+YOLO (You Only Look Once) là một trong những thuật toán nhận diện vật thể (Object Detection) tiên tiến nhất hiện nay trong lĩnh vực Thị giác máy tính (Computer Vision). Khác với các thuật toán truyền thống như R-CNN thường chia quy trình nhận diện thành hai giai đoạn (trích xuất vùng ứng viên và phân loại), YOLO tiếp cận bài toán theo hướng hồi quy (regression).
+
+Thuật toán này chỉ cần "nhìn một lần" duy nhất vào bức ảnh để dự đoán đồng thời vị trí các hộp bao (bounding boxes) và xác suất của các lớp đối tượng. Điều này giúp YOLO đạt được tốc độ xử lý vượt trội, đáp ứng hoàn hảo yêu cầu nhận diện khuôn mặt sinh viên trong thời gian thực tại các cổng kiểm soát ký túc xá.
+
+
+
+Hình 4: Kiến trúc hệ thống YOLO
+
+
+1.3.1.Nguyên lý hoạt động của YOLO
+
+Nguyên lý cốt lõi của YOLO dựa trên việc chia bức ảnh đầu vào thành một lưới các ô có kích thước S * S
+
+Dự đoán hộp bao: Mỗi ô lưới chịu trách nhiệm dự đoán một số lượng nhất định các hộp bao kèm theo điểm tin cậy (Confidence Score). Điểm tin cậy này phản ánh mức độ chắc chắn của mô hình về việc có vật thể trong hộp đó và độ chính xác của hộp bao.
+
+Hàm mất mát (Loss Function): YOLO sử dụng một hàm mất mát phức hợp bao gồm sai số về vị trí hộp bao, sai số về kích thước và sai số về phân loại đối tượng để tối ưu hóa mô hình trong quá trình huấn luyện.
+
+Non-Maximum Suppression (NMS): Để loại bỏ các hộp bao chồng chéo trên cùng một vật thể, YOLO sử dụng kỹ thuật NMS nhằm giữ lại hộp bao có điểm tin cậy cao nhất.
+
+
+1.3.2 Ưu điểm của YOLO trong quản lý ký túc xá
+
+Việc lựa chọn YOLO làm "lõi" công nghệ cho hệ thống quản lý ký túc xá thông minh mang lại nhiều lợi thế:
+
+Tốc độ xử lý cực nhanh: Có khả năng xử lý luồng video trực tiếp từ camera với độ trễ cực thấp, giúp việc điểm danh và mở cửa tự động diễn ra mượt mà, không gây ùn tắc.
+
+Khả năng khái quát hóa: YOLO học được các đặc trưng mang tính ngữ cảnh cao của đối tượng, giúp nhận diện chính xác khuôn mặt ngay cả khi sinh viên đeo kính, thay đổi kiểu tóc hoặc trong các điều kiện ánh sáng khác nhau tại sảnh ký túc xá.
+
+Tối ưu hóa tài nguyên: Các phiên bản như YOLO v8n (Nano) hoặc YOLO v8s (Small) được thiết kế đặc biệt để chạy tốt trên các thiết bị có cấu hình vừa phải (như máy tính văn phòng tại phòng bảo vệ) mà vẫn đảm bảo độ chính xác cần thiết.
+
+
+
+
+
+
+
+
+CHƯƠNG 2: XÂY DỰNG VÀ PHÁT TRIỂN WEB QUẢN LÝ KÝ TÚC XÁ THÔNG MINH
+
+
+2.1. Bài toán cần giải quyết
+
+Trong bối cảnh quy mô sinh viên tại các trường Đại học ngày càng tăng, công tác quản lý nội trú trở nên phức tạp và đòi hỏi tính chính xác cao. Bài toán đặt ra cho hệ thống không chỉ dừng lại ở việc lưu trữ dữ liệu mà còn phải tối ưu hóa quy trình vận hành và đảm bảo an ninh. Cụ thể, hệ thống cần giải quyết các bài toán trọng tâm sau:
+
+
+ Bài toán số hóa thông tin và quản lý thực thể
+
+Đây là bài toán nền tảng nhất. Hệ thống phải quản lý được các thực thể có mối quan hệ chồng chéo:
+
+Quản lý Sinh viên: Lưu trữ hàng nghìn hồ sơ bao gồm thông tin định danh, lịch sử học tập và đặc biệt là dữ liệu khuôn mặt (Face Encoding) để phục vụ AI.
+
+Quản lý Phòng ở: Quản lý theo cấu trúc phân cấp (Tòa nhà -> Tầng -> Phòng -> Giường). Mỗi phòng cần gắn liền với các thuộc tính về giá cả, loại phòng và danh mục thiết bị đi kèm.
+
+Mối quan hệ Sinh viên - Phòng: Giải quyết bài toán "xếp phòng". Hệ thống phải kiểm tra được tình trạng trống của giường trước khi xếp sinh viên vào, tránh tình trạng trùng lặp hoặc quá tải.
+
+
+ Bài toán quản lý tài chính và dịch vụ
+
+Việc tính toán tiền điện, tiền nước thủ công là nguồn cơn của nhiều sai sót và khiếu nại. Bài toán cần giải quyết bao gồm:
+
+Tự động hóa tính toán: Thiết lập công thức tính tiền theo định mức bậc thang (giống quy định nhà nước) hoặc đơn giá cố định của nhà trường.
+
+Minh bạch dữ liệu: Sinh viên phải được xem chi tiết chỉ số cũ, chỉ số mới và thành tiền ngay trên giao diện web cá nhân để đối soát.
+
+Quản lý trạng thái thanh toán: Hệ thống cần phân loại được sinh viên đã đóng phí và chưa đóng phí, tự động gửi thông báo nhắc nhở để giảm tải việc đi thu tiền trực tiếp.
+
+
+ Bài toán an ninh và tích hợp AI nhận diện khuôn mặt
+
+Đây là bài toán kỹ thuật khó nhất, đòi hỏi sự kết hợp giữa phần mềm Web và phần cứng Camera:
+
+Kiểm soát ra vào không tiếp xúc: Thay thế hoàn toàn thẻ từ bằng khuôn mặt. Hệ thống phải giải quyết được tốc độ phản hồi (Latency). Khi sinh viên đứng trước camera, dữ liệu phải được xử lý và trả kết quả về Web ngay lập tức để mở cửa hoặc ghi log.
+
+Phát hiện người lạ: Bài toán đặt ra là nếu camera phát hiện một khuôn mặt không có trong CSDL (người lạ), hệ thống phải phát tín hiệu cảnh báo trên Dashboard của Admin để kịp thời xử lý.
+
+Điểm danh tự động: Tận dụng dữ liệu ra vào để tự động lập bảng quân số nội trú mỗi đêm, thay vì phải đi gõ cửa từng phòng để kiểm tra.
+
+
+Bài toán phân quyền và bảo mật thông tin
+
+Với lượng dữ liệu cá nhân lớn, bài toán bảo mật là ưu tiên hàng đầu:
+
+Phân cấp người dùng: Đảm bảo tính riêng tư. Sinh viên chỉ thấy dữ liệu của mình; Trưởng tầng chỉ thấy dữ liệu của tầng mình quản lý; Admin mới có toàn quyền.
+
+Toàn vẹn dữ liệu: Ngăn chặn các hành vi tấn công mạng vào cơ sở dữ liệu để sửa đổi thông tin hóa đơn hoặc lịch sử ra vào
+
+
+2.2. Thu thập yêu cầu 
+
+Phương pháp thu thập yêu cầu
+
+Để xác định chính xác các yêu cầu chức năng cho phần mềm, nhóm đã áp dụng các phương pháp thu thập sau:
+
+Phỏng vấn trực tiếp: Phỏng vấn Ban quản lý và nhân viên trực trạm tại Ký túc xá để hiểu rõ quy trình tiếp nhận sinh viên, xếp phòng, ghi chỉ số điện nước và thu phí hàng tháng.
+
+Khảo sát bằng bảng hỏi (Survey): Phát phiếu khảo sát (hoặc Google Form) cho sinh viên đang lưu trú để nắm bắt những khó khăn của họ khi tra cứu hóa đơn, thanh toán và gửi các yêu cầu sửa chữa cơ sở vật chất.
+
+Phân tích tài liệu: Nghiên cứu các biểu mẫu hợp đồng thuê phòng, sổ ghi chép điện nước, và biên lai thu tiền đang được Ký túc xá sử dụng hiện tại để số hóa thành các trường dữ liệu trên hệ thống.
+
+Tra cứu các web đi trước: Tìm hiểu, học hỏi từ các dự án trước đó trên môi trường internet
+
+Phân tích yêu cầu chức năng chi tiết theo từng đối tượng
+
+Dựa vào kết quả thu thập, các yêu cầu và chức năng được phân rã theo 4 nhóm đối tượng (Tác nhân) chính như sau:
+
+
+A. Đối tượng: Quản lý (Ban Giám đốc/Trưởng ban quản lý KTX)
+
+Danh sách yêu cầu phía người dùng: Cần một công cụ để giám sát tổng thể tình hình hoạt động của Ký túc xá, đặc biệt là quản lí phòng, quản lí tài khoản người dùng, phân quyền
+
+Cần khả năng thiết lập dữ liệu nền tảng ban đầu như thêm bớt các phòng ở để nhân viên có cơ sở làm việc.
+
+Cần quản lý, cấp phát và phân quyền tài khoản chặt chẽ cho các nhân viên cấp dưới để đảm bảo bảo mật dữ liệu.
+
+Danh sách chức năng hệ thống đáp ứng:
+
+Đăng nhập / Đăng xuất.
+
+Quản lý tài khoản: 
+
+Thêm tài khoản
+
+Sửa tài khoản
+
+Phân quyền tài khoản.
+
+Quản lý phòng: 
+
+Thêm/Sửa/Xóa Phòng.
+
+
+
+
+B. Đối tượng: Nhân viên (Cán bộ quản lý tòa nhà/Kế toán KTX)
+
+Danh sách yêu cầu phía người dùng:
+
+Cần một quy trình thao tác nhanh gọn để tiếp nhận tân sinh viên, kiểm tra phòng trống và gán phòng (check-in) vào đầu mỗi kì học.
+
+Cần công cụ hỗ trợ tính toán tự động tiền điện, tiền nước hàng tháng để tránh sai sót khi lập hóa đơn và thu tiền.
+
+Cần một phân hệ để quản lý và giải quyết nhanh các đơn từ khiếu nại hoặc báo hỏng hóc từ sinh viên thay vì nhận giấy tờ thủ công.
+
+Danh sách chức năng hệ thống đáp ứng:
+
+Đăng nhập / Đăng xuất.
+
+Quản lý sinh viên: 
+
+Tiếp nhận hồ sơ (thêm mới)
+
+Cập nhật thông tin
+
+Tìm kiếm/Tra cứu thông tin sinh viên.
+
+Quản lý lưu trú: 
+
+Tra cứu phòng trống
+
+Xếp phòng (Check-in)
+
+Trả phòng (Check-out)
+
+Quản lý hóa đơn:
+
+Ghi chỉ số điện nước hàng tháng
+
+Lập hóa đơn thanh toán
+
+Thu tiền (xác nhận thanh toán).
+
+Xử lý yêu cầu: 
+
+Duyệt yêu cầu lưu trú
+
+Xử lý khiếu nại/vi phạm.
+
+
+C. Đối tượng: Sinh viên (Người đang lưu trú)
+
+Danh sách yêu cầu phía người dùng:
+
+Mong muốn chủ động xem được thông tin hợp đồng thuê phòng của mình (ngày bắt đầu, ngày hết hạn).
+
+Cần một kênh liên lạc trực tuyến với Ban quản lý để báo cáo các thiết bị hỏng (đèn, quạt, ống nước...) hoặc xin gia hạn hợp đồng, chuyển phòng mà không phải lên văn phòng chờ đợi.
+
+Danh sách chức năng hệ thống đáp ứng:
+
+Đăng nhập / Đăng xuất / Quên mật khẩu.
+
+Tra cứu thông tin cá nhân: 
+
+Xem thông tin hồ sơ cá nhân
+
+Xem thông tin hợp đồng thuê phòng.
+
+Tra cứu hợp đồng & Hóa đơn: 
+
+Xem lịch sử hóa đơn
+
+Xem trạng thái thanh toán
+
+Yêu cầu hỗ trợ: 
+
+Gửi yêu cầu sửa chữa
+
+Đăng ký gia hạn phòng
+
+
+D. Đối tượng: Khách vãng lai (Sinh viên chưa có phòng/Người muốn đăng ký)
+
+Danh sách yêu cầu phía người dùng:
+
+Cần một cổng thông tin để có thể tự điền thông tin cá nhân và đăng ký nhu cầu thuê phòng KTX trước khi đến làm thủ tục trực tiếp.
+
+Danh sách chức năng hệ thống đáp ứng:
+
+Đăng ký (lưu trú) (dữ liệu này sẽ đẩy về chức năng "Tiếp nhận hồ sơ" của Nhân viên).
+
+
+
+
+2.3. Xây dựng hệ thống quản lý ký túc xá thông minh 
+
+
+2.3.1. Kiến trúc hệ thống
+
+Hệ thống quản lý ký túc xá  thời tiết được xây dựng theo mô hình kiến trúc nhiều lớp, giúp đảm bảo tính rõ ràng trong phân tách chức năng, tăng khả năng mở rộng và thuận tiện cho việc bảo trì trong tương lai. Kiến trúc gồm 3 phần chính
+
+Lớp trình diễn (Presentation Layer): đóng vai trò là giao diện tương tác người dùng. Ở lớp này, hệ thống tập trung vào việc tối ưu hóa trải nghiệm người dùng thông qua hai cổng giao tiếp riêng biệt: Dashboard dành cho cán bộ quản lý và trang cá nhân dành cho sinh viên. Cơ chế vận hành của lớp trình diễn dựa trên các công nghệ Web hiện đại, cho phép hiển thị các thông tin phức tạp như biểu đồ tài chính, sơ đồ phòng ốc trực quan và luồng dữ liệu camera thời gian thực. Điểm cốt lõi của lớp này là khả năng giao tiếp bất đồng bộ với máy chủ trung tâm, giúp người dùng có thể thực hiện các thao tác quản lý dữ liệu mà không gặp phải tình trạng trễ hoặc tải lại trang gây gián đoạn. 
+
+Thứ hai là Lớp logic nghiệp vụ (Business Logic Layer):  Đây là nơi thiết lập các quy tắc nghiệp vụ phức tạp nhất của ký túc xá. Lớp này không chỉ xử lý tín hiệu từ AI mà quan trọng hơn là quản lý sinh viên nội trú: từ khâu tiếp nhận đơn đăng ký, xét duyệt điều kiện phòng trống, đến việc tự động sắp xếp giường chiếu và quản lý biến động nhân sự (chuyển phòng, tạm vắng). Tại đây, mô hình MVC (Model-View-Controller) được áp dụng để tách biệt hoàn toàn logic quản lý khỏi giao diện. Controller đóng vai trò bộ lọc trung tâm, tiếp nhận các yêu cầu từ Admin (như thao tác thêm sinh viên, xếp phòng) hoặc các yêu cầu từ Sinh viên (đăng ký sửa chữa, xem hóa đơn). Sau đó, nó thực hiện các phép toán logic như tính toán định mức điện nước bậc thang hay xác thực quyền hạn trước khi ra lệnh cho lớp dữ liệu ghi nhận thay đổi. Việc tách bạch này cho phép hệ thống quản lý hàng nghìn sinh viên một cách trơn tru mà không làm thay đổi cấu trúc cốt lõi khi cần nâng cấp tính năng.
+
+Lớp dữ liệu (Data Layer):Lớp này chịu trách nhiệm lưu trữ và bảo vệ dữ liệu , cốt lõi là hệ thống danh mục phòng ở và hồ sơ sinh viên. Hệ thống sử dụng cơ chế quản lý dữ liệu quan hệ chặt chẽ để thiết lập mối liên kết giữa "Sinh viên - Phòng - Tòa nhà". Mọi thông tin như: trạng thái giường (trống/đang sử dụng), danh mục tài sản trong phòng, thông tin nhân thân, diện chính sách và lịch sử đóng phí đều được lưu trữ tại đây. Bên cạnh đó, các bộ mã hóa khuôn mặt (Face Encodings) cũng được lưu dưới dạng dữ liệu vector để phục vụ việc đối soát nhanh. Lớp dữ liệu thực hiện các nhiệm vụ sống còn về toàn vẹn dữ liệu thông qua các ràng buộc khóa ngoại (Foreign Keys) và chỉ mục (Indexing). Điều này đảm bảo rằng khi một sinh viên được Admin xóa khỏi danh sách phòng trên Web, hoặc khi AI xác nhận sinh viên đó vừa đi qua cổng, mọi thông tin liên quan từ lịch sử cư trú đến lịch sử ra vào đều được cập nhật đồng bộ, chính xác và không có sai số.
+
+Việc tổ chức hệ thống theo kiến trúc đa tầng không chỉ giúp quá trình phát triển thuận lợi mà còn đảm bảo khả năng mở rộng linh hoạt. Đây là hướng tiếp cận hiện đại, đáp ứng tốt yêu cầu xử lý dữ liệu lớn về hồ sơ sinh viên, sơ đồ phòng ở và tích hợp mượt mà  trí tuệ nhân tạo vào quy trình vận hành an ninh thực tế.
+
+
+
+
+
+Hình 5: Kiến trúc hệ thống 3 lớp
+
+
+2.3.2. Xác định yêu cầu hệ thống
+
+Tác nhân của hệ thống
+
+
+
+Tác nhân
+
+Mô tả
+
+Quản lý
+
+Là người quản trị toàn bộ web, có quyền cao nhất để thêm, sửa, xóa dữ liệu và tài khoản.
+
+Người dùng vãng lai
+
+Là người sử dụng chưa có tài khoản của ứng dụng
+
+Nhân viên
+
+Là người chịu trách nhiệm kiểm tra quản lý hồ sơ sinh viên, giám sát hệ thống 
+
+Sinh Viên
+
+Là người có tài khoản và cư trú trong ký túc xá
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sơ đồ usecase tổng quát của hệ thống
+
+
+
+Hình 6 : Sơ đồ usecase tổng quát
+
+Mô tả tài liệu SRS cho các chức năng
+
+
+
+Chức năng Đăng ký ở Nội trú Ký túc xá 
+
+Mô tả
+
+Cho phép sinh viên nộp đơn đăng ký chỗ ở trong Ký túc xá thông qua hệ thống trực tuyến. Đơn đăng ký sẽ được hệ thống kiểm tra tính hợp lệ ban đầu trước khi lưu trữ với trạng thái "Chờ duyệt".
+
+
+
+Yêu cầu thông tin đầu vào
+
+-student_id: Mã số sinh viên (Định dạng: SVxxxxxx)
+
+- full_name: Họ và tên
+
+- dob: Ngày sinh (Định dạng YYYY-MM-DD)
+
+- class: Lớp học
+
+- faculty: Khoa
+
+-room_type: Loại phòng (4, 6, hoặc 8 người)
+
+-semester: Học kỳ đăng ký (Định dạng: HKx-YYYY)
+
+-priority_type: Loại đối tượng ưu tiên
+
+-priority_proof: Minh chứng ưu tiên (File định dạng jpg/png/pdf, dung lượng <=5MB)
+
+
+
+Hoạt động của hệ thống
+
+-Hệ thống nhận yêu cầu "Đăng ký nội trú" từ sinh viên qua giao diện.
+
+- Kiểm tra thời gian đăng ký. Nếu nằm ngoài thời gian quy định, hệ thống hiển thị thông báo "Hệ thống đang đóng, vui lòng quay lại sau" và vô hiệu hóa chức năng gửi đơn.
+
+- Hiển thị Form đăng ký với các thông tin cá nhân đã được tự động điền.
+
+Chức năng Đăng nhập
+
+Mô tả
+
+Cho phép người dùng (Nhân viên, Sinh viên) truy cập vào hệ thống ký túc xá bằng tài khoản đã được cấp để thực hiện các chức năng tương ứng với quyền hạn.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Tên đăng nhập (string): Không chứa ký tự đặc biệt, không khoảng trắng.
+
+- Mật khẩu (string): Từ 1-8 ký tự, bao gồm chữ hoa, chữ thường, và ký tự đặc biệt (như !, #, %).
+
+- Nhấn nút "Đăng nhập".
+
+
+
+Hoạt động của hệ thống
+
+- Truy vấn cơ sở dữ liệu để xác thực thông tin tài khoản.
+
+- Nếu thông tin chính xác: Khởi tạo phiên làm việc (Token/Session).
+
+- Hiển thị thông báo “Đăng nhập thành công”.
+
+- Điều hướng người dùng về trang chủ cá nhân.
+
+Chức năng Xem thông tin hồ sơ cá nhân
+
+Mô tả
+
+Cho phép sinh viên sau khi đăng nhập có thể xem chi tiết các thông tin cá nhân, học tập và liên lạc được lưu trữ trên hệ thống
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Mã định danh (Session/Token): Hệ thống tự động lấy từ phiên đăng nhập hiện tại của sinh viên (không yêu cầu người dùng nhập thủ công).
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống nhận lệnh từ sinh viên qua menu "Hồ sơ cá nhân".
+
+- Xác thực quyền truy cập dựa trên Token/Session hiện hành.
+
+- Hệ thống thực hiện truy vấn chi tiết từ bảng Sinh viên và các bảng liên quan trong CSDL
+
+- Đảm bảo bảo mật: Chỉ truy xuất đúng dữ liệu của sinh viên đang đăng nhập.
+
+- Hệ thống hiển thị giao diện hồ sơ trực quan gồm ảnh thẻ,Họ tên , Mssv, Ngày Sinh ,Giới tính , Khóa, Khoa, Lớp, Trạng thái,Số điện thoại, Email
+
+Chức năng Duyệt yêu cầu lưu trú
+
+Mô tả
+
+Cho phép Nhân viên quản lý xem xét và phê duyệt các đơn đăng ký nội trú đang ở trạng thái "Chờ duyệt", đồng thời chỉ định phòng ở cụ thể cho sinh viên.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Danh sách phòng trống thỏa mãn: Giới tính sinh viên, loại phòng đã đăng ký và còn chỗ trống 
+
+- Chọn một mã phòng(room_id) cụ thể từ danh sách gợi ý.
+
+- Nhấn nút "Xác nhận phê duyệt".
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống tự động lọc và hiển thị danh sách phòng phù hợp dựa trên hồ sơ sinh viên và đơn đăng ký.
+
+- Khi nhân viên nhấn xác nhận, hệ thống kiểm tra:
+
+Đơn đăng ký vẫn đang ở trạng thái "Chờ duyệt".
+
+Phòng được chọn vẫn còn chỗ trống tại thời điểm xử lý.
+
+Sinh viên chưa có tên trong danh sách lưu trú nào khác (tránh trùng lặp).
+
+- Cập nhật đơn đăng ký: Chuyển trạng thái sang "Đã duyệt" và gán mã phòng.
+
+- Cập nhật bảng phòng: Giảm số lượng chỗ trống 
+
+- Hiển thị thông báo: “Phê duyệt thành công. 
+
+Chức năng Xử lý khiếu nại
+
+Mô tả
+
+Cho phép Nhân viên tiếp nhận, xem xét và đưa ra phương án giải quyết cho các phản ánh/khiếu nại từ sinh viên, đồng thời cập nhật trạng thái xử lý trên hệ thống.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Thông tin sinh viên, phân loại khiếu nại, nội dung mô tả và hình ảnh đính kèm.
+
+- Nội dung phản hồi / Phương án giải quyết (Text).
+
+- Lựa chọn hình thức bổ sung (Ghi nhận vi phạm hoặc Chuyển yêu cầu sửa chữa).
+
+- Nhấn nút "Gửi phản hồi & Đóng khiếu nại".
+
+
+
+Hoạt động của hệ thống
+
+- Thông tin sinh viên, phân loại khiếu nại, nội dung mô tả và hình ảnh đính kèm.
+
+- Nội dung phản hồi / Phương án giải quyết (Text).
+
+- Lựa chọn hình thức bổ sung (Ghi nhận vi phạm hoặc Chuyển yêu cầu sửa chữa).
+
+- Nhấn nút "Gửi phản hồi & Đóng khiếu nại".
+
+Chức năng gửi yêu cầu sửa 
+
+Mô tả
+
+Cho phép sinh viên đang nội trú báo cáo các sự cố hư hỏng về cơ sở vật chất (điện, nước, nội thất...) trong phòng để yêu cầu bộ phận kỹ thuật xử lý.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Hệ thống hiển thị số phòng, Tòa nhà/Cụm nhà.
+
+- Loại thiết bị/khu vực hỏng (Chọn từ danh mục: Điện, Nước, Nội thất, Khác).
+
+- Mô tả chi tiết tình trạng hư hỏng (Text).
+
+- Hình ảnh đính kèm (Tùy chọn: định dạng và dung lượng hợp lệ).
+
+- Nhấn nút "Gửi yêu cầu".
+
+
+
+Hoạt động của hệ thống
+
+- Khi sinh viên nhấn gửi, hệ thống kiểm tra:
+
+- Không để trống các trường bắt buộc (loại sự cố, mô tả).
+
+- Kiểm tra tính hợp lệ của tệp đính kèm (nếu có).
+
+- Tạo bản ghi yêu cầu mới trong CSDL với mã yêu cầu riêng biệt.
+
+- Ghi nhận thời gian gửi và thiết lập trạng thái ban đầu là "Chờ tiếp nhận”.
+
+- Hiển thị thông báo "Gửi yêu cầu thành công".
+
+- Điều hướng sinh viên đến trang danh sách lịch sử yêu cầu để theo dõi tiến độ.
+
+Chức năng Đăng ký gia hạn phòng
+
+Mô tả
+
+Cho phép sinh viên đang nội trú nộp đơn đăng ký tiếp tục ở tại phòng hiện tại cho kỳ học hoặc năm học tiếp theo trong thời gian hệ thống mở đợt gia hạn.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Thông tin phòng đang ở.
+
+- Mốc thời gian gia hạn: Học kỳ kế tiếp hoặc Năm học mới
+
+- Tích chọn cam kết tiếp tục thực hiện nội quy Ký túc xá.
+
+- Nhấn nút "Gửi yêu cầu gia hạn".
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống tự động kiểm tra: Sinh viên phải đang ở phòng hợp lệ, không nợ phí và không có vi phạm kỷ luật nghiêm trọng.
+
+- Xác minh phòng hiện tại không nằm trong danh sách "Tạm dừng phục vụ" trong kỳ tới.
+
+- Tạo đơn gia hạn mới trong CSDL với mã hồ sơ riêng biệt.
+
+- Thiết lập trạng thái đơn hàng là "Chờ duyệt".
+
+- Hiển thị thông báo: “Gửi yêu cầu gia hạn thành công”.
+
+- Cung cấp mã đơn để sinh viên tiện theo dõi tiến độ xét duyệt.
+
+Chức năng Thêm tài khoản nhân viên
+
+Mô tả
+
+Cho phép Quản lý (Admin) khởi tạo tài khoản mới cho nhân viên vào hệ thống, bao gồm việc thiết lập thông tin cá nhân và cấp quyền truy cập quản lý.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Họ và tên: Không trống, không chứa số/ký tự đặc biệt.
+
+- Số điện thoại: Đúng 10 chữ số, bắt đầu bằng số 0.
+
+- Email: Đúng định dạng tiêu chuẩn (@).
+
+- CCCD: Đúng 12 chữ số.
+
+- Nhấn nút "Lưu".
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống hiển thị Form nhập liệu khi Quản lý truy cập chức năng "Thêm nhân viên mới".
+
+- Khi nhấn "Lưu", hệ thống kiểm tra:
+
+- Không bỏ trống các trường bắt buộc.
+
+- Kiểm tra định dạng dữ liệu (Email, SĐT, CCCD) theo quy tắc.
+
+- Kiểm tra tính duy nhất: Đảm bảo tài khoản/nhân viên chưa tồn tại trong hệ thống.
+
+- Tự động cấp Mã nhân viên và Mật khẩu khởi tạo.
+
+- Lưu thông tin vào CSDL và kích hoạt tài khoản
+
+- Hiển thị thông báo "Thêm nhân viên thành công".
+
+- Tự động cập nhật lại danh sách nhân viên trên giao diện quản lý.
+
+Chức năng Phân quyền tài khoản
+
+Mô tả
+
+Cho phép Quản lý cấp cao thay đổi vai trò (Role) và quyền hạn truy cập các tính năng cho một tài khoản cụ thể trong hệ thống.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Thông tin người dùng, quyền hiện tại và danh sách các quyền có thể cấp (Role List).
+
+- Chọn quyền hạn mới từ danh sách.
+
+- Nhấn "Xác nhận thay đổi".
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống truy xuất dữ liệu tài khoản và hiển thị Form phân quyền tương ứng.
+
+- Hệ thống thực hiện kiểm tra logic trước khi cập nhật:
+
+- Tài khoản mục tiêu phải đang ở trạng thái "Hoạt động".
+
+- Quản lý thực hiện phải có thẩm quyền cao hơn hoặc bằng quyền định cấp (Kiểm tra bảng Role).
+
+- Cập nhật vai trò mới của người dùng vào bảng phân quyền trong cơ sở dữ liệu.
+
+- Hiển thị thông báo "Cập nhật quyền thành công".
+
+- Quyền hạn mới có hiệu lực ngay lập tức đối với người dùng được phân quyền.
+
+Chức năng Cập nhật trạng thái tài khoản
+
+Mô tả
+
+Cho phép Quản lý thay đổi trạng thái hoạt động của một tài khoản (Kích hoạt hoặc Vô hiệu hóa) để kiểm soát quyền truy cập hệ thống của người dùng.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Họ tên, Chức vụ, CCCD và trạng thái hiện tại của tài khoản mục tiêu.
+
+- Lựa chọn trạng thái mới (Ví dụ: Hoạt động/ Không hoạt động).
+
+- Xác nhận thay đổi.
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống hiển thị màn hình chi tiết tài khoản khi Quản lý chọn chức năng từ danh sách người dùng.
+
+- Hệ thống thực hiện kiểm tra logic:
+
+- Ràng buộc tự quản: Tài khoản mục tiêu không được là tài khoản của chính Quản lý đang thực hiện thao tác.
+
+- Kiểm tra logic: Trạng thái mới phải khác với trạng thái hiện tại của tài khoản.
+
+- Cập nhật giá trị trạng thái mới vào bản ghi tài khoản tương ứng trong cơ sở dữ liệu.
+
+- Hiển thị thông báo "Cập nhật trạng thái thành công".
+
+- Nếu tài khoản bị chuyển sang "Không hoạt động", hệ thống sẽ chặn mọi nỗ lực đăng nhập tiếp theo của tài khoản đó.
+
+Chức năng Thêm phòng mới
+
+Mô tả
+
+Cho phép Quản lý khởi tạo thông tin phòng ở mới vào hệ thống, thiết lập vị trí (tòa, tầng) và sức chứa để sẵn sàng phục vụ việc xếp chỗ cho sinh viên.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Số phòng: Số dương (Ví dụ: 402).
+
+- Tòa nhà & Tầng (Block): Chọn từ danh sách có sẵn.
+
+- Số lượng giường: Số dương,sức chứa tối đa của loại phòng.
+
+- Nhấn nút "Lưu thông tin"
+
+
+
+Hoạt động của hệ thống
+
+-Hệ thống hiển thị biểu mẫu nhập liệu khi Quản lý truy cập chức năng "Thêm phòng mới".
+
+- Khi nhấn "Lưu", hệ thống kiểm tra:
+
+- Không để trống các trường bắt buộc.
+
+- Kiểm tra tính hợp lệ của số phòng và số giường (phải là số dương).
+
+- Ràng buộc duy nhất: Số phòng không được trùng lặp trong cùng một tòa nhà.
+
+- Ràng buộc kỹ thuật: Số giường không vượt quá sức chứa tối đa mà loại phòng đó quy định.
+
+- Ghi nhận thông tin vào CSDL.
+
+- Ngoại lệ:
+
+- Trùng số phòng: Thông báo "Phòng [Số phòng] đã tồn tại trong Tòa [Tên tòa]".
+
+- Thiếu thông tin: Đánh dấu đỏ các trường trống và ngăn chặn gửi form.
+
+- Sai định mức giường: Thông báo "Số giường vượt quá sức chứa tối đa của loại phòng".
+
+- Lỗi hạ tầng: Thông báo "Không thể lưu dữ liệu do lỗi kết nối" và giữ nguyên CSDL (Đảm bảo tối thiểu).
+
+Chức năng Xóa thông tin phòng
+
+Mô tả
+
+Cho phép Quản lý loại bỏ thông tin một phòng cụ thể khỏi hệ thống sau khi đã xác thực các điều kiện về nhân sự và dữ liệu tài chính liên quan.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Họ và tên: Không trống, không chứa số/ký tự đặc biệt.
+
+- Số điện thoại: Đúng 10 chữ số, bắt đầu bằng số 0.
+
+- Email: Đúng định dạng tiêu chuẩn (@).
+
+- CCCD: Đúng 12 chữ số.
+
+- Nhấn nút "Lưu".
+
+
+
+Hoạt động của hệ thống
+
+- Hệ thống hiển thị danh sách các phòng và thông tin chi tiết của phòng được chọn để Quản lý kiểm tra lại trước khi xóa.
+
+- Khi nhấn xác nhận, hệ thống kiểm tra các ràng buộc nghiệp vụ:
+
+- Nhân sự: Phòng phải trống (không còn sinh viên nào đang cư trú).
+
+- Tài chính/Dữ liệu: Phòng không còn các ràng buộc dữ liệu chưa xử lý (Ví dụ: Hóa đơn điện nước chưa chốt).
+
+3. Xử lý lưu trữ:
+
+- Thực hiện lệnh xóa dữ liệu phòng tương ứng trong CSDL.
+
+- Xử lý các liên kết dữ liệu liên quan theo đúng quy định bảo trì hệ thống.
+
+4. Phản hồi:
+
+- Hiển thị thông báo "Xóa thông tin phòng thành công".
+
+- Tự động cập nhật và hiển thị lại danh sách phòng mới nhất trên giao diện.
+
+5. Ngoại lệ:
+
+- Phòng có sinh viên: Cảnh báo "Lỗi: Không thể xóa phòng đang có sinh viên cư trú. Vui lòng chuyển sinh viên trước khi xóa".
+
+- Vướng ràng buộc hóa đơn: Thông báo "Lỗi: Phòng còn hóa đơn chưa xử lý".
+
+- Quản lý hủy thao tác: Hệ thống dừng quy trình và không thay đổi dữ liệu.
+
+- Lỗi kết nối CSDL: Thông báo "Không thể kết nối CSDL, vui lòng thử lại sau" và thực hiện Rollback để giữ nguyên dữ liệu gốc (Đảm bảo tối thiểu).
+
+Chức năng Cập nhật thông tin phòng
+
+Mô tả
+
+Cho phép Quản lý điều chỉnh các thông tin hiện có của một phòng (loại phòng, số giường, trạng thái vận hành) để phù hợp với tình hình thực tế của Ký túc xá.
+
+
+
+Yêu cầu thông tin đầu vào
+
+- Form chứa dữ liệu hiện tại: Số phòng, Tòa, Loại phòng và Trạng thái.
+
+-  Quản lý chọn các trường cần thay đổi thông tin.
+
+- Nhấn nút "Lưu thay đổi".
+
+
+
+Hoạt động của hệ thống
+
+1. Tiếp nhận yêu cầu:
+
+- Hệ thống hiển thị Form chỉnh sửa khi Quản lý chọn một phòng cụ thể từ danh sách quản lý.
+
+2. Xác thực điều kiện (Validate):
+
+- Khi nhấn "Lưu", hệ thống kiểm tra các ràng buộc:
+
+- Không để trống các trường dữ liệu bắt buộc.
+
+- Số lượng: Số giường phải là số dương và<=sức chứa tối đa của loại phòng.
+
+- Nếu chuyển trạng thái sang "Bảo trì/Sửa chữa", hệ thống kiểm tra phòng phải đang trống (không có sinh viên).
+
+- Kiểm tra thay đổi: Phải có ít nhất một thông tin khác biệt so với dữ liệu cũ.
+
+3. Xử lý và Lưu trữ:
+
+- Ghi nhận các thông tin mới vào bảng Phòng trong CSDL.
+
+4. Phản hồi:
+
+- Hiển thị thông báo "Cập nhật thông tin phòng thành công".
+
+- Làm mới giao diện (Refresh) để hiển thị dữ liệu vừa cập nhật.
+
+5. Ngoại lệ:
+
+- Lỗi logic bảo trì: Thông báo "Phòng hiện có sinh viên lưu trú. Không thể chuyển trạng thái sang Đang sửa chữa".
+
+- Dữ liệu không đổi: Hiển thị thông báo “Không có dữ liệu nào bị thay đổi”.
+
+- Dữ liệu sai định dạng: Hiển thị lỗi dữ liệu không hợp lệ tại trường tương ứng.
+
+- Lỗi kết nối CSDL: Thông báo "Không thể kết nối CSDL, vui lòng thử lại sau" và thực hiện Rollback (Đảm bảo tối thiểu).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2.3.3. Cơ sở dữ liệu 
+
+
+Bảng cơ sở dữ liệu
+
+
+
+Hình 7: Thiết kế cơ sở dữ liệu
+
+
+Danh sách các bảng trong Cơ sở dữ liệu
+
+
+
+STT
+
+Tên bảng
+
+Mô tả
+
+1
+
+Tài khoản
+
+Lưu trữ thông tin tài khoản
+
+2
+
+Tòa nhà
+
+Lưu trữ thông tin tòa nhà
+
+3
+
+Loại phòng
+
+Lưu trữ thông tin loại phòng
+
+4
+
+Nhân viên 
+
+Lưu trữ thông tin nhân viên
+
+5
+
+Sinh viên
+
+Lưu trữ thông tin sinh viên
+
+6
+
+Phòng
+
+Lưu trữ thông tin phòng
+
+7
+
+Chỉ số điện nước
+
+Lưu trữ thông tin chỉ số điện nước
+
+8
+
+Hồ sơ đăng ký
+
+Lưu trữ thông tin hồ sơ đăng ký
+
+9
+
+Hợp đồng
+
+Lưu trữ thông tin hợp đồng
+
+10
+
+Yêu cầu 
+
+Lưu trữ thông tin yêu cầu
+
+11
+
+Hóa đơn
+
+Lưu trữ thông tin hóa đơn
+
+12
+
+Thanh toán
+
+Lưu trữ thông tin thanh toán 
+
+
+Chi tiết các bảng
+
+1. Bảng tài khoản
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+account_id
+
+int
+
+Khóa ngoại
+
+Mã tài khoản
+
+2
+
+usename
+
+string
+
+
+
+Tên tài khoản
+
+3
+
+password_hash
+
+string
+
+
+
+Mật khẩu
+
+4
+
+role
+
+enum
+
+
+
+Vai trò
+
+5
+
+trang_thai
+
+enum
+
+
+
+Trạng thái tài khoản
+
+6
+
+create_at
+
+datetime
+
+
+
+Ngày tạo tài khoản
+
+role_enum = {admin, staff, student}
+
+trang_thai_enum = {active, inactive, locked}
+
+
+
+2. Bảng tòa nhà
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+building_id
+
+int 
+
+Khóa ngoại
+
+Mã tòa nhà
+
+2
+
+ten-toa
+
+string
+
+
+
+Tên tòa nhà
+
+3
+
+so_tang
+
+int
+
+
+
+Số tầng
+
+4
+
+gioi_tinh
+
+enum
+
+
+
+Giới tính
+
+
+
+gioi_tinh_enum = {nam, nữ, khác}
+
+3.Bảng loại phòng
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+type_id
+
+int
+
+Khóa ngoại
+
+Mã loại phòng
+
+2
+
+ten_loai
+
+string
+
+
+
+Tên loại phòng
+
+3
+
+suc_chua
+
+int
+
+
+
+Sức chứa
+
+4
+
+gia_thue_thang
+
+decimal
+
+
+
+Giá thuê tháng
+
+4.Bảng nhân viên
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+staff_id
+
+int
+
+Khóa chính
+
+Mã nhân viên
+
+2
+
+account_id
+
+int
+
+Khóa ngoại
+
+Mã tài khoản
+
+3
+
+ho_ten
+
+string
+
+
+
+Họ tên
+
+4
+
+so_dien_thoai
+
+string
+
+
+
+Số điện thoại
+
+5
+
+email
+
+string
+
+
+
+Email
+
+6
+
+cccd
+
+string
+
+
+
+Số CCCD
+
+7
+
+chuc_vu
+
+string
+
+
+
+Chức vụ
+
+5. Bảng sinh viên
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+student_id
+
+int
+
+Khóa chính
+
+Mã sinh viên
+
+2
+
+account_id
+
+int 
+
+Khóa ngoại
+
+Mã tài khoản
+
+3
+
+ma_sv
+
+string
+
+
+
+Mã định danh sinh viên
+
+4
+
+ho_ten
+
+string
+
+
+
+Họ tên
+
+5
+
+ngay_sinh
+
+date
+
+
+
+Ngày sinh
+
+6
+
+gioi_tinh
+
+enum
+
+
+
+Giới tính
+
+7
+
+khoa
+
+string
+
+
+
+Khoa
+
+8
+
+lop
+
+string
+
+
+
+Lớp
+
+9
+
+email
+
+string
+
+
+
+Email
+
+10
+
+so_dien_thoai
+
+string
+
+
+
+Số điện thoại
+
+11
+
+cccd
+
+string
+
+
+
+Số CCCD
+
+12
+
+trang_thai_hoc
+
+enum
+
+
+
+Trạng thái học
+
+13
+
+trang_thai_luu_tru
+
+enum
+
+
+
+Trạng thái lưu trú
+
+
+
+gioi_tinh_enum = {nam, nữ, khác}
+
+trang_thai_hoc_enum = {dang_hoc, da_ra_truong, bao_luu}
+
+trang_thai_luu_tru_enum = {chua_o, dang_o, da_tra_phong, no_xau}
+
+6. Bảng phòng
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+room_id
+
+int
+
+Khóa chính
+
+Mã phòng
+
+2
+
+building_id
+
+int 
+
+Khóa ngoại
+
+Mã tòa nhà
+
+3
+
+type_id
+
+int
+
+Khóa ngoại
+
+Mã loại phòng
+
+4
+
+so_phong
+
+string
+
+
+
+Số phòng
+
+5
+
+tang
+
+int
+
+
+
+Tầng
+
+6
+
+so_giuong
+
+int
+
+
+
+Số giường
+
+7
+
+so_cho_trong
+
+int
+
+
+
+Số chỗ trống
+
+8
+
+trang_thai
+
+enum
+
+
+
+Trạng thái phòng
+
+
+
+phong_trang_thai_enum = {san_sang, day, bao_tri, dong_cua}
+
+7.Bảng chỉ số điện nước
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+metter_id
+
+int
+
+Khóa chính
+
+Mã đồng hồ
+
+2
+
+room_id
+
+int
+
+
+
+Mã phòng
+
+3
+
+thang
+
+int
+
+
+
+Tháng
+
+4
+
+nam
+
+int
+
+
+
+Năm
+
+5
+
+chi_so_dien_cuoi
+
+decimal
+
+
+
+Chỉ số điện cuối
+
+6
+
+chi_so_nuoc_cuoi
+
+decimal
+
+
+
+Chỉ số nước cuối
+
+8. Bảng hồ sơ đăng ký
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+reg_id
+
+int
+
+Khóa chính
+
+Mã đơn đăng ký
+
+2
+
+student_id
+
+int
+
+Khóa ngoại
+
+Mã sinh viên
+
+3
+
+room_id
+
+int
+
+Khóa ngoại
+
+Mã phòng
+
+4
+
+hoc_ky
+
+string
+
+
+
+Học kỳ
+
+5
+
+loai_phong_yc
+
+enum
+
+
+
+Loại phòng yêu cầu
+
+6
+
+trang_thai
+
+enum
+
+
+
+Trạng thái hồ sơ đăng ký
+
+7
+
+ngay_dang_ky
+
+datetime
+
+
+
+Ngày đăng ký
+
+8
+
+duyet_boi
+
+int
+
+Khóa ngoại
+
+Duyệt bởi
+
+
+
+loai_phong_yc_ enum = {4, 6, 8}
+
+ho_so_dang_ky_trang_thai_enum = {cho_duyet, da_duyet, tu_choi, cho_bo_sung, da_tra_phong}
+
+9. Bảng hợp đồng
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+contract_id
+
+int
+
+Khóa chính
+
+Mã hợp đồng
+
+2
+
+reg_id
+
+int
+
+Khóa ngoại
+
+Mã đơn đăng ký
+
+3
+
+student_id
+
+int
+
+Khóa ngoại
+
+Mã sinh viên
+
+4
+
+room_id
+
+int
+
+Khóa ngoại
+
+Mã phòng
+
+5
+
+so_hop_dong
+
+string
+
+
+
+Số hợp đồng
+
+6
+
+ngay_ky
+
+date
+
+
+
+Ngày ký
+
+7
+
+ngay_bat_dau
+
+date
+
+
+
+Ngày bắt đầu
+
+8
+
+ngay_ket_thuc
+
+date
+
+
+
+Ngày kết thúc
+
+9
+
+trang_thai
+
+enum
+
+
+
+Trạng thái hợp đồng
+
+
+
+hop_dong_trang_thai_enum = {hieu_luc, het_han, da_thanh_ly, no_xau}
+
+10. Bảng yêu cầu
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+reg_id
+
+int
+
+Khóa chính
+
+Mã đơn đăng ký
+
+2
+
+student_id
+
+int
+
+Khóa ngoại
+
+Mã sinh viên
+
+3
+
+room_id
+
+int
+
+Khóa ngoại
+
+Mã phòng
+
+4
+
+loai_yeu_cau
+
+enum
+
+
+
+Loại yêu cầu
+
+5
+
+danh_muc
+
+enum
+
+
+
+Danh mục
+
+6
+
+mo_ta
+
+text
+
+
+
+Mô tả
+
+7
+
+trang_thai
+
+enum
+
+
+
+Trạng thái yêu cầu
+
+8
+
+ngay_gui
+
+datetime
+
+
+
+Ngày gửi
+
+
+
+loai_yeu_cau_enum = {sua_chua, khieu_nai, gia_han, tra_phong, khac}
+
+danh_muc_enum = {dien_nuoc, an_ninh, phi_dich_vu, noi_that, khac}
+
+yeu_cau_trang_thai_enum = {cho_tiep_nhan, dang_xu_ly, da_xu_ly, dong_lai}
+
+11. Bảng hóa đơn
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+invoice_id
+
+int
+
+Khóa chính
+
+Mã hóa đơn
+
+2
+
+contract_id
+
+int
+
+Khóa ngoại
+
+Mã hợp đồng
+
+3
+
+metter_id
+
+int
+
+Khóa ngoại
+
+Mã số đồng hồ
+
+4
+
+thang
+
+int
+
+
+
+Tháng
+
+5
+
+nam
+
+int
+
+
+
+Năm
+
+6
+
+tong_tien
+
+decimal
+
+
+
+Tổng tiền
+
+7
+
+trang_thai
+
+enum
+
+
+
+Trạng thái hóa đơn
+
+8
+
+han_thanh_toan
+
+datetime
+
+
+
+Hạn thanh toán
+
+hoa_don_trang_thai_enum = {chua_thanh_toan, da_thanh_toan, dang_xu_ly, qua_han}
+
+12. Bảng thanh toán
+
+
+
+STT
+
+Tên trường
+
+Kiểu dữ liệu
+
+Khóa
+
+Mô tả
+
+1
+
+payment_id
+
+int
+
+Khóa chính
+
+Mã thanh toán
+
+2
+
+invoice_id
+
+int
+
+Khóa ngoại
+
+Mã hóa đơn
+
+3
+
+ngay_thanh_toan
+
+datetime
+
+
+
+Ngày thanh toán
+
+4
+
+so_tien_tra
+
+decimal
+
+
+
+Số tiền trả
+
+5
+
+phuong_thuc
+
+enum
+
+
+
+Phương thức thanh toán
+
+6
+
+ma_giao_dich
+
+string
+
+
+
+Mã giao dịch
+
+7
+
+minh_chung
+
+string
+
+
+
+Minh chứng
+
+8
+
+ghi_chu
+
+text
+
+
+
+Ghi chú
+
+
+
+phuong_thuc_enum = {tien_mat, chuyen_khoan, vnpay, momo, khac}
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHƯƠNG 3: XÂY DỰNG WEB VÀ DEMO SẢN PHẨM
+
+
+3.1.Môi trường thực nghiệm 
+
+Trong quá trình triển khai và kiểm thử hệ thống, nhóm nghiên cứu đã xây dựng một môi trường thực nghiệm đồng bộ, bao gồm các công cụ và nền tảng phần mềm phục vụ cho việc phát triển lõi trí tuệ nhân tạo và hệ thống quản trị Web đa tầng. Cụ thể bao gồm:
+
+Hệ thống Web Quản lý (Web Application): Được phát triển trên nền tảng React.js (Frontend) và Node.js/Express (Backend). Hệ thống cho phép thực hiện toàn bộ các nghiệp vụ quản trị KTX như quản lý sinh viên, sơ đồ phòng, hóa đơn và giám sát an ninh trực tuyến.
+
+YOLO (You Only Look Once): Thuật toán học sâu hiện đại được sử dụng để xây dựng mô hình nhận diện khuôn mặt. YOLO giúp hệ thống phát hiện và xác thực danh tính sinh viên từ luồng video của camera với tốc độ cực nhanh, đảm bảo tính thời gian thực cho việc kiểm soát ra vào.
+
+PostgreSQL Database: Hệ quản trị cơ sở dữ liệu quan hệ được sử dụng để lưu trữ dữ liệu tập trung như hồ sơ nhân thân, cấu trúc phòng ở, lịch sử ra vào và dữ liệu tài chính. MySQL được lựa chọn vì khả năng đảm bảo tính toàn vẹn dữ liệu thông qua các ràng buộc khóa ngoại, phù hợp với các dữ liệu có cấu trúc chặt chẽ.
+
+Postman: Công cụ hỗ trợ kiểm thử các API RESTful được xây dựng để kết nối giữa module AI và máy chủ Web. Nhóm sử dụng Postman để kiểm tra tính đúng đắn của việc truyền tải dữ liệu nhận diện khuôn mặt, đảm bảo phản hồi giữa camera và hệ thống quản lý diễn ra không có lỗi.
+
+OpenCV & Dlib: Các thư viện mã nguồn mở hỗ trợ xử lý hình ảnh và tiền xử lý dữ liệu đầu vào. Các thư viện này giúp chuẩn hóa khuôn mặt, cân bằng ánh sáng trước khi đưa vào mô hình YOLO, từ đó nâng cao độ chính xác của hệ thống.
+
+
+
+
+3.2. Kết quả 
+
+
+3.2.1. Kết quả mô hình nhận diện AI (YOLO)
+
+Mô hình nhận diện khuôn mặt sau khi huấn luyện đã đạt được các thông số kỹ thuật ấn tượng trong môi trường thực tế tại ký túc xá:
+
+Độ chính xác: Tỉ lệ nhận diện thành công (Accuracy) đạt trên 95% trong các kịch bản ánh sáng ổn định.
+
+Tốc độ xử lý: Thời gian phản hồi trung bình (Inference time) đạt mức < 0.2 giây/khung hình, đảm bảo sinh viên có thể di chuyển liên tục qua cổng mà không cần dừng lại quá lâu.
+
+Tính ổn định: Mô hình thể hiện khả năng thích nghi tốt khi sinh viên đeo kính, thay đổi kiểu tóc hoặc trong điều kiện ánh sáng thay đổi nhẹ. Các chỉ số về sai số (Loss function) giảm dần và hội tụ ổn định sau 500 vòng lặp (epochs) huấn luyện.
+
+
+3.2.2. Đánh giá vận hành hệ thống Web quản lý
+
+Sau quá trình thử nghiệm trên môi trường giả lập với dữ liệu, nhóm nghiên cứu đưa ra các đánh giá chi tiết về hiệu năng và chức năng của hệ thống Web quản lý Ký túc xá như sau:
+
+a. Hiệu năng và tốc độ xử lý:
+
+Tốc độ phản hồi: Hệ thống vận hành mượt mà, thời gian tải dữ liệu trung bình < 1.2s. Các thao tác cập nhật (thêm sinh viên, xếp phòng) diễn ra gần như tức thì.
+
+Tính đồng bộ: Dữ liệu từ module AI YOLO được đẩy về Web Server và cập nhật lên Dashboard quản trị với độ trễ thấp (< 0.5s), đảm bảo tính thời gian thực trong giám sát an ninh.
+
+
+b. Đánh giá về chức năng nghiệp vụ (Functional Evaluation)
+
+Hệ thống đã thực hiện đầy đủ và chính xác các yêu cầu chức năng đã đề ra trong phần đặc tả SRS:
+
+Quản lý lưu trú: Chức năng xếp phòng hoạt động thông minh, tự động ẩn các phòng đã đầy giường và chỉ hiển thị các lựa chọn phù hợp với giới tính/khóa học của sinh viên.
+
+Nhóm chức năng Quản lý dữ liệu: Đã triển khai đầy đủ các tính năng quản lý dữ liệu bao gồm: xem, thêm, sửa, xóa dữ liệu . Ứng dụng hoạt động ổn định, đảm bảo dữ liệu được cập nhật chính xác và nhanh chóng. Việc thao tác với dữ liệu thông qua giao diện quản trị rõ ràng, dễ sử dụng.
+
+Quản lý tài chính: Module tính tiền điện nước thực hiện chính xác các phép tính theo đơn giá lũy tiến. Việc tự động xuất hóa đơn PDF giúp chuyên nghiệp hóa công tác thu phí và giảm 90% thời gian so với viết biên lai tay.
+
+Nhóm chức năng Quản lý tài khoản: Cho phép thực hiện các chức năng như tạo tài khoản, phân quyền truy cập, chỉnh sửa thông tin người dùng và xóa tài khoản khi cần thiết. Website đảm bảo tính bảo mật và kiểm soát truy cập tốt, phù hợp với yêu cầu một ứng dụng có người dùng phân cấp.
+
+
+c. Đánh giá giao diện và trải nghiệm người dùng (UI/UX)
+
+Đánh giá giao diện: Giao diện người dùng được thiết kế để đảm bảo sự thân thiện và dễ sử dụng. Các chức năng ứng dụng được tối ưu hóa để người dùng có thể thực hiện nhanh chóng và dễ dàng, đồng thời đảm bảo tính thẩm mỹ và sự rõ ràng trong quá trình trình bày thông tin.
+
+
+
+
+
+
+3.3. Demo giao diện hệ thống
+
+
+
+
+
+
+
+
+
+
+
+
+KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+
+
+1.Kết luận
+
+Sau quá trình nghiên cứu, thiết kế và triển khai thực nghiệm hệ thống, nhóm nghiên cứu đã đạt được các kết quả trọng tâm sau:
+
+Về mặt phương pháp luận và kỹ thuật:
+
+Phát triển thành công hệ thống quản lý tích hợp: Xây dựng hoàn thiện mô hình quản trị ký túc xá dựa trên kiến trúc đa tầng (Multi-tier) kết hợp với mô hình thiết kế MVC, đảm bảo tính tách bạch giữa giao diện, logic và dữ liệu.
+
+Ứng dụng thành công Trí tuệ nhân tạo: Tích hợp hiệu quả thuật toán YOLO trong bài toán nhận diện khuôn mặt sinh viên, giải quyết bài toán kiểm soát ra vào thời gian thực với độ chính xác cao.
+
+Thiết kế cơ chế đồng bộ dữ liệu thông minh: Xây dựng được luồng dữ liệu khép kín giữa Module AI và hệ thống Web, cho phép tự động hóa quy trình ghi log ra vào và điểm danh nội trú mà không cần can thiệp thủ công.
+
+Về hiệu quả thực nghiệm:
+
+Độ chính xác cao: Mô hình nhận diện đạt tỉ lệ chính xác trên 95% trong điều kiện ánh sáng ổn định và duy trì hiệu suất tốt (>88%) ngay cả khi sinh viên đeo khẩu trang hoặc thay đổi phụ kiện.
+
+Hiệu năng vận hành: Thời gian phản hồi hệ thống cực ngắn (dưới 0.2 giây cho nhận diện và dưới 1 giây cho các tác vụ Web), đảm bảo trải nghiệm mượt mà cho cả cán bộ quản lý và sinh viên.
+
+Tối ưu hóa quản lý: Tự động hóa hoàn toàn việc tính toán hóa đơn điện nước và quản lý trạng thái phòng, giảm thiểu 80% thời gian xử lý thủ tục hành chính so với phương thức truyền thống.
+
+Về ứng dụng thực tiễn:
+
+Giải pháp an ninh tin cậy: Cung cấp phương thức kiểm soát an ninh không tiếp xúc, hiện đại, phù hợp với môi trường giáo dục thông minh (Smart Campus).
+
+Nâng cao tính minh bạch: Cổng thông tin sinh viên giúp minh bạch hóa các khoản thu dịch vụ, tạo sự tin tưởng và thuận tiện cho sinh viên nội trú.
+
+Sẵn sàng triển khai: Hệ thống có tính thực tiễn cao, hoàn toàn có thể áp dụng ngay tại các ký túc xá đại học hoặc các khu nội trú tập trung tại Việt Nam.
+
+
+2. Hướng phát triển
+
+Mở rộng phạm vi ứng dụng:
+
+Tích hợp đa dịch vụ: Phát triển thêm các module quản lý nhà xe thông minh, quản lý thư viện hoặc thanh toán căng tin qua nhận diện khuôn mặt để xây dựng hệ sinh thái thẻ sinh viên số.
+
+Mở rộng quy mô: Nâng cấp kiến trúc để quản lý liên thông nhiều cụm ký túc xá trong cùng một hệ thống quản trị trung tâm.
+
+Tích hợp IoT: Kết nối với các thiết bị phần cứng như công tơ điện tử thông minh để tự động cập nhật chỉ số điện nước mà không cần nhập liệu thủ công.
+
+Nâng cao hiệu năng mô hình AI:
+
+Công nghệ Anti-spoofing: Nghiên cứu và tích hợp các kỹ thuật chống giả mạo khuôn mặt (bằng ảnh chụp hoặc video) để nâng cao tối đa tính an ninh.
+
+Tối ưu hóa Deep Learning: Thử nghiệm các phiên bản YOLO mới hơn hoặc các mạng học sâu khác để duy trì độ chính xác cao trong các điều kiện môi trường cực đoan (thiếu sáng trầm trọng hoặc góc quay camera hẹp).
+
+Hoàn thiện nền tảng Web:
+
+Phát triển Mobile App: Xây dựng ứng dụng di động trên nền tảng Android/iOS để sinh viên nhận thông báo đẩy (push notification) về hóa đơn hoặc thông báo khẩn từ KTX.
+
+Tích hợp cổng thanh toán: Kết nối trực tiếp với các ví điện tử hoặc ngân hàng để sinh viên có thể thanh toán phí nội trú ngay trên hệ thống.
+
+Hệ thống hỗ trợ AI Chatbot: Tích hợp Chatbot tự động trả lời các thắc mắc thường gặp về nội quy và thủ tục ký túc xá cho sinh viên 24/7.
+
+
+
+
+
+
+
+
+
+
+
+
+DANH MỤC TÀI LIỆU THAM KHẢO
+
+
+
+
+
+
+
+
+

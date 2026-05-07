@@ -1,0 +1,296 @@
+'use client';
+
+import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
+import { API_BASE, authHeaders, apiFetch } from '@/lib/api';
+
+export default function RepairRequestsPage() {
+    const router = useRouter();
+    const [requests, setRequests] = useState<any[]>([]);
+    const [currentRoom, setCurrentRoom] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
+    
+    // Form States
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const fileRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!requireAuth(router)) return;
+        fetchInitialData();
+    }, [router]);
+
+    const fetchInitialData = async () => {
+        setIsLoading(true);
+        try {
+            const roomRes = await apiFetch(`${API_BASE}/repair-requests/my-current-room`, {
+                headers: authHeaders(),
+            });
+            if (roomRes.ok) {
+                const roomData = await roomRes.json();
+                setCurrentRoom(roomData.error ? null : roomData);
+            }
+            await fetchHistory();
+        } catch (err) {
+            console.error('Failed to fetch data', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchHistory = async () => {
+        const res = await apiFetch(`${API_BASE}/repair-requests/my-requests`, {
+            headers: authHeaders(),
+        });
+        if (res.ok) {
+            setRequests(await res.json());
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMsg('');
+        setSuccessMsg('');
+
+        if (!currentRoom) {
+            setErrorMsg('Bạn chưa được xếp phòng, không thể gửi yêu cầu sự cố.');
+            return;
+        }
+
+        if (!category || !description.trim()) {
+            setErrorMsg('Vui lòng nhập đầy đủ các thông tin bắt buộc (Loại sự cố, Mô tả).');
+            return;
+        }
+
+        setIsSubmitting(true);
+        const formData = new FormData();
+        formData.append('category', category);
+        formData.append('description', description);
+        if (file) {
+            formData.append('attachment_file', file);
+        }
+
+        try {
+            const res = await apiFetch(`${API_BASE}/repair-requests`, {
+                method: 'POST',
+                headers: authHeaders(),
+                body: formData
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.');
+
+            setSuccessMsg('Gửi yêu cầu thành công!');
+            setCategory('');
+            setDescription('');
+            setFile(null);
+            if (fileRef.current) fileRef.current.value = '';
+            setIsFormOpen(false);
+
+            await fetchHistory();
+        } catch (err: any) {
+            setErrorMsg(err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const categoryText: Record<string, string> = {
+        'ELECTRIC': 'Hệ thống Điện',
+        'WATER': 'Hệ thống Nước',
+        'FURNITURE': 'Nội thất (Giường, tủ...)',
+        'OTHER': 'Khác'
+    };
+
+    const categoryIcon: Record<string, string> = {
+        'ELECTRIC': 'bolt',
+        'WATER': 'water_drop',
+        'FURNITURE': 'chair',
+        'OTHER': 'help'
+    };
+
+    const statusBadge = (st: string) => {
+         switch (st) {
+             case 'PENDING': return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Chờ tiếp nhận</span>;
+             case 'PROCESSING': return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>Đang xử lý</span>;
+             case 'RESOLVED': return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-800 border border-green-200"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>Đã khắc phục</span>;
+             default: return <span className="px-3 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-600">{st}</span>;
+         }
+    };
+
+    return (
+        <div className="max-w-7xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest p-6 rounded-[24px] border border-outline-variant/10 shadow-sm">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+                        <span className="material-symbols-outlined text-2xl">construction</span>
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-on-surface tracking-tight">Hỗ trợ Kỹ thuật & Sửa chữa</h1>
+                        {isLoading ? (
+                            <p className="text-sm text-on-surface-variant font-medium">Đang tải thông tin phòng...</p>
+                        ) : currentRoom ? (
+                            <p className="text-sm text-on-surface-variant font-medium">Phòng hiện tại: <span className="text-primary font-black">{currentRoom.roomNumber}</span></p>
+                        ) : (
+                            <p className="text-sm text-error font-medium">Bạn chưa gắn liền với phòng nào.</p>
+                        )}
+                    </div>
+                </div>
+                {currentRoom && (
+                    <button
+                        onClick={() => setIsFormOpen(!isFormOpen)}
+                        className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">{isFormOpen ? 'close' : 'add'}</span>
+                        {isFormOpen ? 'Hủy' : 'Báo cáo Sự cố'}
+                    </button>
+                )}
+            </div>
+
+            {/* Alerts */}
+            {errorMsg && (
+                <div className="bg-error-container text-on-error-container px-6 py-4 rounded-xl flex items-center gap-3 border border-error/20">
+                    <span className="material-symbols-outlined text-error" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+                    <span className="text-sm font-bold">{errorMsg}</span>
+                </div>
+            )}
+            {successMsg && (
+                <div className="bg-green-50 text-green-800 px-6 py-4 rounded-xl flex items-center gap-3 border border-green-200">
+                    <span className="material-symbols-outlined text-green-600" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <span className="text-sm font-bold">{successMsg}</span>
+                </div>
+            )}
+
+            {/* Creation Form Modal */}
+            {isFormOpen && currentRoom && (
+                <div className="bg-surface-container-lowest rounded-[24px] border border-outline-variant/10 shadow-sm overflow-hidden">
+                    <div className="bg-surface-container-low px-8 py-5 border-b border-surface-container-high flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                            <span className="material-symbols-outlined">add_box</span>
+                        </div>
+                        <h2 className="text-lg font-bold text-on-surface">Phiếu Báo Hư Hỏng</h2>
+                    </div>
+                    <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Loại sự cố *</label>
+                                <select value={category} onChange={e => setCategory(e.target.value)} 
+                                    className="w-full bg-surface outline-none border border-outline-variant/50 focus:border-primary px-4 py-3 rounded-xl transition-colors font-medium text-sm text-on-surface" required>
+                                    <option value="">— Chọn danh mục —</option>
+                                    <option value="ELECTRIC">⚡ Sự cố Điện (Bóng đèn, Ổ cắm...)</option>
+                                    <option value="WATER">💧 Sự cố Nước (Rò rỉ, Tắc nghẽn...)</option>
+                                    <option value="FURNITURE">🛏️ Sự cố Nội thất (Giường, Tủ...)</option>
+                                    <option value="OTHER">📋 Sự cố Khác</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ảnh Hiện Trường</label>
+                                <label className="flex flex-col items-center justify-center w-full h-[58px] border-2 border-dashed border-outline-variant/50 rounded-xl cursor-pointer bg-surface hover:bg-surface-container-low hover:border-primary/30 transition-all">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-outline text-[18px]">cloud_upload</span>
+                                        <p className="text-xs text-on-surface-variant font-medium">{file ? <span className="font-bold text-primary">{file.name}</span> : 'Nhấp để tải lên (JPG/PNG)'}</p>
+                                    </div>
+                                    <input type="file" className="hidden" ref={fileRef} accept="image/png, image/jpeg" onChange={e => setFile(e.target.files?.[0] || null)} />
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mô tả sự cố *</label>
+                            <textarea rows={3} value={description} onChange={e => setDescription(e.target.value)}
+                                className="w-full bg-surface outline-none border border-outline-variant/50 focus:border-primary px-4 py-3 rounded-xl transition-colors text-sm text-on-surface resize-none"
+                                placeholder="Ví dụ: Bóng đèn tube ở giường số 1 bị chập cheng không sáng..." required />
+                        </div>
+
+                        <div className="pt-4 border-t border-surface-container-high flex justify-end gap-3">
+                            <button type="button" onClick={() => setIsFormOpen(false)}
+                                className="px-6 py-3 font-bold text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors text-sm">
+                                Hủy bỏ
+                            </button>
+                            <button type="submit" disabled={isSubmitting}
+                                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-primary-container text-white font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all text-sm disabled:opacity-50">
+                                <span className="material-symbols-outlined text-[18px]">send</span>
+                                {isSubmitting ? 'Đang gửi...' : 'Gửi Yêu Cầu'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* History Table */}
+            <div className="bg-surface-container-lowest rounded-[24px] border border-surface-container-highest overflow-hidden shadow-sm">
+                <div className="bg-surface-container-low px-6 py-4 border-b border-surface-container-high flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-on-surface-variant">history</span>
+                        <h3 className="text-base font-bold text-on-surface">Lịch sử Yêu cầu</h3>
+                    </div>
+                    <span className="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-lg text-xs font-bold">{requests.length} báo cáo</span>
+                </div>
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-48">
+                        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                    </div>
+                ) : requests.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-on-surface-variant">
+                        <span className="material-symbols-outlined text-6xl opacity-20 mb-4">check_circle</span>
+                        <p className="font-bold text-lg">Tuyệt vời!</p>
+                        <p className="text-sm opacity-80">Phòng của bạn chưa có báo cáo sự cố nào.</p>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm whitespace-nowrap">
+                            <thead className="bg-surface-container-low text-on-surface-variant text-[11px] uppercase tracking-wider font-bold">
+                                <tr>
+                                    <th className="px-6 py-4">Ngày</th>
+                                    <th className="px-6 py-4">Mã</th>
+                                    <th className="px-6 py-4">Danh mục</th>
+                                    <th className="px-6 py-4">Mô tả</th>
+                                    <th className="px-6 py-4 text-center">Đính kèm</th>
+                                    <th className="px-6 py-4 text-right">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-surface-container-highest">
+                                {requests.map(req => (
+                                    <tr key={req.id} className="hover:bg-surface-container-low/50 transition-colors group">
+                                        <td className="px-6 py-4 text-on-surface-variant font-medium">
+                                            {new Date(req.createdAt).toLocaleDateString('vi-VN')}
+                                        </td>
+                                        <td className="px-6 py-4 text-xs font-mono text-outline">
+                                            #{req.id.substring(0, 8)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[16px] text-primary">{categoryIcon[req.category] || 'help'}</span>
+                                                <span className="font-bold text-on-surface">{categoryText[req.category]}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-on-surface-variant max-w-xs truncate">
+                                            {req.description}
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            {req.attachmentUrl ? (
+                                                <a href={`${API_BASE}${req.attachmentUrl}`} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs font-bold">
+                                                    Xem ảnh
+                                                </a>
+                                            ) : <span className="text-outline/30">—</span>}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            {statusBadge(req.status)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
