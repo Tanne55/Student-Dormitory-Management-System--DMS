@@ -5,6 +5,7 @@ import { DormRegistration, DormRegistrationStatus } from '../dorm-registrations/
 import { Room, RoomStatus } from '../rooms/entities/room.entity';
 import { RoomType } from '../rooms/entities/room-type.entity';
 import { Student, StudentLivingStatus } from '../students/entities/student.entity';
+import { generateRandomPassword } from '../../common/helpers/random-password';
 import { StudentProfile } from '../students/entities/student-profile.entity';
 import { EmergencyContact } from '../students/entities/emergency-contact.entity';
 import { Contract } from '../contracts/entities/contract.entity';
@@ -123,7 +124,7 @@ export class CheckinsService {
 
       let generatedPassword: string | null = null;
       if (!targetAccount) {
-        generatedPassword = `SV${Math.floor(1000 + Math.random() * 9000)}`;
+        generatedPassword = generateRandomPassword('SV-', 12);
         const passwordHash = await bcrypt.hash(generatedPassword, 10);
         targetAccount = accountRepoTx.create({
           username: registration.studentCode,
