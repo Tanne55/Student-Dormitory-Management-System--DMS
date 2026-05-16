@@ -1,9 +1,11 @@
 import { Controller, Get, Patch, Param, Req, UnauthorizedException } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/roles.decorator';
 
 @ApiTags('notifications')
 @Controller('notifications')
+@Roles('student', 'staff', 'admin')
 export class NotificationsController {
     constructor(private readonly notificationsService: NotificationsService) {}
 
