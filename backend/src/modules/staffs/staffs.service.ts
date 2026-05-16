@@ -12,6 +12,7 @@ import { StaffFloorScope } from './entities/staff-floor-scope.entity';
 import { Floor } from '../buildings/entities/floor.entity';
 import { Account, AccountRole, AccountStatus } from '../auth/entities/account.entity';
 import { CreateStaffDto } from './dto/create-staff.dto';
+import { generateRandomPassword } from '../../common/helpers/random-password';
 import { SetStaffFloorScopesDto } from './dto/set-staff-floor-scopes.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -47,11 +48,11 @@ export class StaffsService {
             }
 
             // Generate Password and StaffCode
-            const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-            const generatedPassword = `Ktx@${randomSuffix}`;
+            const generatedPassword = generateRandomPassword('Ktx@', 12);
             const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-            
-            const staffCode = `NV${Date.now().toString().slice(-6)}${randomSuffix}`;
+
+            const codeSuffix = generateRandomPassword('', 4);
+            const staffCode = `NV${Date.now().toString().slice(-6)}${codeSuffix}`;
 
             // Create Account
             const newAccount = accountRepo.create({

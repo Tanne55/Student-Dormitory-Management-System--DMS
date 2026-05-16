@@ -1,7 +1,9 @@
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Invoice, InvoiceStatus } from '../invoices/entities/invoice.entity';
+import { Student } from '../students/entities/student.entity';
+import { DormRegistration, DormRegistrationStatus } from '../dorm-registrations/entities/dorm-registration.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Payment, PaymentMethod, PaymentStatus } from './entities/payment.entity';
 import { AuditService } from '../audit/audit.service';
@@ -16,6 +18,8 @@ export class PaymentsService {
   constructor(
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
     @InjectRepository(Invoice) private readonly invoiceRepo: Repository<Invoice>,
+    @InjectRepository(Student) private readonly studentRepo: Repository<Student>,
+    @InjectRepository(DormRegistration) private readonly dormRegRepo: Repository<DormRegistration>,
     private readonly auditService: AuditService,
     @Inject(forwardRef(() => VnpayService)) private readonly vnpayService: VnpayService,
     private readonly dataSource: DataSource,
@@ -65,15 +69,39 @@ export class PaymentsService {
     payerStudentCode: string | null;
     ipAddress: string;
     bankCode?: string;
+    actorAccountId: number;
+    actorRole: string;
   }) {
     if (!this.vnpayService.isConfigured()) {
       throw new BadRequestException('VNPay chua duoc cau hinh tren server.');
     }
 
-    const invoice = await this.invoiceRepo.findOne({ where: { id: input.invoiceId } });
+    const invoice = await this.invoiceRepo.findOne({
+      where: { id: input.invoiceId },
+      relations: ['room'],
+    });
     if (!invoice) throw new NotFoundException('Không tìm thấy hóa đơn.');
     if (invoice.status === InvoiceStatus.PAID) {
       throw new BadRequestException('Hóa đơn đã được thanh toán.');
+    }
+
+    let payerStudentCode = input.payerStudentCode;
+    if (input.actorRole === 'student') {
+      const student = await this.studentRepo.findOne({ where: { accountId: input.actorAccountId } });
+      if (!student) {
+        throw new ForbiddenException('Tài khoản không có hồ sơ sinh viên.');
+      }
+      const activeReg = await this.dormRegRepo.findOne({
+        where: {
+          studentCode: student.studentCode,
+          status: In([DormRegistrationStatus.APPROVED, DormRegistrationStatus.COMPLETED]),
+        },
+        order: { createdAt: 'DESC' },
+      });
+      if (!activeReg?.roomId || activeReg.roomId !== invoice.room?.id) {
+        throw new ForbiddenException('Hoá đơn không thuộc phòng của bạn.');
+      }
+      payerStudentCode = student.studentCode;
     }
 
     const amount = Number(invoice.totalAmount);
@@ -84,7 +112,7 @@ export class PaymentsService {
       amount,
       method: PaymentMethod.VNPAY,
       status: PaymentStatus.PENDING,
-      payerStudentCode: input.payerStudentCode,
+      payerStudentCode,
       transactionRef,
       paidAt: null,
     });

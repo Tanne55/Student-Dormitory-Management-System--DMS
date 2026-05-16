@@ -2,6 +2,8 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invoice } from '../invoices/entities/invoice.entity';
 import { Payment } from './entities/payment.entity';
+import { Student } from '../students/entities/student.entity';
+import { DormRegistration } from '../dorm-registrations/entities/dorm-registration.entity';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
 import { AuditModule } from '../audit/audit.module';
@@ -9,7 +11,7 @@ import { VnpayModule } from '../vnpay/vnpay.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Payment, Invoice]),
+    TypeOrmModule.forFeature([Payment, Invoice, Student, DormRegistration]),
     AuditModule,
     forwardRef(() => VnpayModule),
   ],

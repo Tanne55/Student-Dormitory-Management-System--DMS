@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Index } from 'typeorm';
 
 export enum AccountRole {
   ADMIN = 'admin',
@@ -39,7 +39,8 @@ export class Account {
   deletedAt?: Date;
 
   // Additional columns for Forgot Password functionality
-  @Column({ name: 'reset_password_token', nullable: true })
+  @Index('idx_accounts_reset_token')
+  @Column({ name: 'reset_password_token', type: 'varchar', length: 64, nullable: true })
   resetPasswordToken?: string;
 
   @Column({ name: 'reset_password_expires', nullable: true })
