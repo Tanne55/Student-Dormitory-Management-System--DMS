@@ -9,6 +9,16 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Tin x-forwarded-for chi tu reverse proxy duoc khai bao trong TRUST_PROXY.
+  // Vi du: TRUST_PROXY=1 (1 hop), TRUST_PROXY=loopback (chi local), TRUST_PROXY=10.0.0.0/8
+  const trustProxy = process.env.TRUST_PROXY;
+  if (trustProxy) {
+    const value = /^\d+$/.test(trustProxy) ? Number(trustProxy) : trustProxy;
+    app.set('trust proxy', value);
+  } else {
+    app.set('trust proxy', false);
+  }
+
   app.use(
     helmet({
       contentSecurityPolicy: false,
