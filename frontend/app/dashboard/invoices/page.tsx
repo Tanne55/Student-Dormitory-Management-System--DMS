@@ -24,6 +24,7 @@ export default function InvoicesPage() {
     const [isPayModalOpen, setIsPayModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
     const [studentCodeInput, setStudentCodeInput] = useState('');
+    const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'BANK_TRANSFER' | 'VNPAY'>('CASH');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [pdfLoadingId, setPdfLoadingId] = useState<string | null>(null);
 
@@ -72,6 +73,7 @@ export default function InvoicesPage() {
     const handleOpenPayModal = (invoice: any) => {
         setSelectedInvoice(invoice);
         setStudentCodeInput(role === 'student' ? userCode : '');
+        setPaymentMethod(role === 'student' ? 'VNPAY' : 'CASH');
         setIsPayModalOpen(true);
         setErrorMsg('');
     };
@@ -86,23 +88,45 @@ export default function InvoicesPage() {
         setIsSubmitting(true);
         setErrorMsg('');
         try {
-            const res = await apiFetch(`${API_BASE}/payments`, {
-                method: 'POST',
-                headers: authHeaders({ 'Content-Type': 'application/json' }),
-                body: JSON.stringify({
-                    invoiceId: selectedInvoice.id,
-                    payerStudentCode: studentCodeInput,
-                    method: 'CASH',
-                })
-            });
-
-            if (res.ok) {
-                showToast('Đã xác nhận thanh toán Hóa đơn thành công!');
-                setIsPayModalOpen(false);
-                fetchInvoices(role);
+            if (paymentMethod === 'VNPAY') {
+                const res = await apiFetch(`${API_BASE}/vnpay/create-payment-url`, {
+                    method: 'POST',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({
+                        invoiceId: selectedInvoice.id,
+                        payerStudentCode: studentCodeInput,
+                    }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.paymentUrl) {
+                        window.location.href = data.paymentUrl;
+                        return;
+                    }
+                    setErrorMsg('Không nhận được URL thanh toán từ VNPay.');
+                } else {
+                    const err = await res.json();
+                    setErrorMsg(err.message || 'Không khởi tạo được thanh toán VNPay.');
+                }
             } else {
-                const err = await res.json();
-                setErrorMsg(err.message || 'Lỗi xác thực luồng thanh toán');
+                const res = await apiFetch(`${API_BASE}/payments`, {
+                    method: 'POST',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({
+                        invoiceId: selectedInvoice.id,
+                        payerStudentCode: studentCodeInput,
+                        method: paymentMethod,
+                    }),
+                });
+
+                if (res.ok) {
+                    showToast('Đã xác nhận thanh toán Hóa đơn thành công!');
+                    setIsPayModalOpen(false);
+                    fetchInvoices(role);
+                } else {
+                    const err = await res.json();
+                    setErrorMsg(err.message || 'Lỗi xác thực luồng thanh toán');
+                }
             }
         } catch {
             setErrorMsg('Lỗi kết nối máy chủ tài chính.');
@@ -358,7 +382,40 @@ export default function InvoicesPage() {
                                     className="w-full rounded-2xl border border-outline-variant/50 focus:border-primary px-4 py-4 font-black font-mono text-lg text-center tracking-widest bg-surface text-on-surface outline-none transition-colors shadow-inner uppercase disabled:bg-surface-variant disabled:text-slate-400"
                                     placeholder="Vd: 20216000"
                                 />
-                                {role === 'student' && <p className="text-[11px] text-center text-slate-500 font-medium mt-1">Đại diện đóng thay cả phòng (Mô phỏng VNPay SDK)</p>}
+                                {role === 'student' && <p className="text-[11px] text-center text-slate-500 font-medium mt-1">Đại diện đóng thay cả phòng</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                                    <span className="material-symbols-outlined text-[14px]">payments</span>
+                                    Hình thức thanh toán
+                                </label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {([
+                                        { v: 'VNPAY', label: 'VNPay', icon: 'account_balance_wallet' },
+                                        { v: 'CASH', label: 'Tiền mặt', icon: 'payments' },
+                                        { v: 'BANK_TRANSFER', label: 'Chuyển khoản', icon: 'account_balance' },
+                                    ] as const).map((opt) => {
+                                        const active = paymentMethod === opt.v;
+                                        const disabled = role === 'student' && opt.v !== 'VNPAY';
+                                        return (
+                                            <button
+                                                key={opt.v}
+                                                type="button"
+                                                disabled={disabled}
+                                                onClick={() => setPaymentMethod(opt.v)}
+                                                className={`flex flex-col items-center gap-1 px-2 py-3 rounded-xl border-2 transition-all text-xs font-bold ${
+                                                    active
+                                                        ? 'border-primary bg-primary/10 text-primary'
+                                                        : 'border-outline-variant/30 bg-surface text-on-surface-variant hover:border-primary/40'
+                                                } disabled:opacity-40 disabled:cursor-not-allowed`}
+                                            >
+                                                <span className="material-symbols-outlined text-lg">{opt.icon}</span>
+                                                {opt.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
                             <button
@@ -371,9 +428,13 @@ export default function InvoicesPage() {
                                 ) : (
                                     <>
                                         <span className="material-symbols-outlined">
-                                            {isStaff ? 'paid' : 'qr_code_scanner'}
+                                            {paymentMethod === 'VNPAY' ? 'qr_code_scanner' : 'paid'}
                                         </span>
-                                        {isStaff ? 'Đã thu khoản tiền này' : 'Thanh toán E-Wallet ngay'}
+                                        {paymentMethod === 'VNPAY'
+                                            ? 'Tiếp tục với VNPay'
+                                            : isStaff
+                                                ? 'Đã thu khoản tiền này'
+                                                : 'Xác nhận thanh toán'}
                                     </>
                                 )}
                             </button>
