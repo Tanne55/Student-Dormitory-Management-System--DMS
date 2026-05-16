@@ -68,11 +68,11 @@ Bám theo các module nghiệp vụ trong [`backend/src/app.module.ts`](backend/
 - Xem nhật ký thao tác (audit logs) và dashboard analytics.
 
 ### Hạ tầng / Platform
-- **Auth**: đăng ký / đăng nhập / quên mật khẩu / đặt lại mật khẩu (JWT Bearer).
+- **Auth**: đăng nhập / quên mật khẩu / đặt lại mật khẩu qua email (JWT Bearer, password policy ≥ 10 ký tự).
 - **Notifications**: thông báo nội bộ với chuông realtime ([`frontend/components/NotificationBell.tsx`](frontend/components/NotificationBell.tsx)).
 - **Documents**: tạo & tải PDF (pdfmake) — xem [`frontend/lib/pdfDownload.ts`](frontend/lib/pdfDownload.ts).
-- **Mail**: scaffold gửi mail qua SMTP (nodemailer).
-- **VNPay**: scaffold tích hợp cổng thanh toán VNPay (sandbox/production).
+- **Mail**: gửi mail qua SMTP (nodemailer) — reset password, thông báo.
+- **VNPay**: tích hợp cổng thanh toán VNPay với HMAC-SHA512, IPN idempotent (sandbox/production).
 
 ---
 
@@ -81,12 +81,15 @@ Bám theo các module nghiệp vụ trong [`backend/src/app.module.ts`](backend/
 ### Backend — `backend/`
 - [NestJS 11](https://nestjs.com/) — framework Node.js theo module/DI.
 - **TypeORM 0.3** + **mysql2** — ORM cho MySQL 8 (xem [`backend/src/database/database.config.ts`](backend/src/database/database.config.ts)).
-- **JWT auth**: `@nestjs/jwt` + `passport-jwt` với guard toàn cục `JwtAuthGuard` và `RolesGuard` (xem [`backend/src/app.module.ts`](backend/src/app.module.ts)).
-- **bcrypt** — hash mật khẩu.
+- **JWT auth**: `@nestjs/jwt` + `passport-jwt` với guard toàn cục `JwtAuthGuard` và `RolesGuard` default-deny (xem [`backend/src/app.module.ts`](backend/src/app.module.ts)).
+- **bcrypt** — hash mật khẩu (cost 10).
+- **helmet** — security headers; **@nestjs/throttler** — rate limit (5 req/phút cho `/auth/*`).
 - **Swagger** (`@nestjs/swagger`) — UI tại `http://localhost:3001/api`.
 - **pdfmake** — sinh PDF (hợp đồng, hóa đơn).
-- **nodemailer** — gửi mail SMTP.
-- **class-validator / class-transformer** — DTO validation.
+- **nodemailer** — gửi mail SMTP (reset password, thông báo).
+- **VNPay HMAC-SHA512** integration — thanh toán online idempotent.
+- **file-type + sanitize-filename** — kiểm tra magic bytes + sanitize tên file upload.
+- **class-validator / class-transformer** — DTO validation với `ValidationPipe` global (whitelist + forbidNonWhitelisted).
 
 ### Frontend — `frontend/`
 - [Next.js 16](https://nextjs.org/) (App Router) + **React 19**.
@@ -158,42 +161,33 @@ QliKTX/
 - **MySQL**: 8.x (InnoDB, charset `utf8mb4`, collation `utf8mb4_unicode_ci`).
 - **Git**.
 
-> **Lưu ý / Note.** File [`docker-compose.yml`](docker-compose.yml) ở gốc đang khai báo image `postgres:15-alpine`, nhưng codebase thực tế đang dùng **MySQL 8** (xem [`backend/src/database/database.config.ts`](backend/src/database/database.config.ts) — `type: 'mysql'`, dependency `mysql2` trong [`backend/package.json`](backend/package.json), và các migration `.sql` được viết cho MySQL trong [`backend/migrations/`](backend/migrations/)). Hãy chạy MySQL 8 cục bộ hoặc thay container Postgres trong `docker-compose.yml` bằng `mysql:8` trước khi cấu hình.
+> **Khuyến nghị / Tip.** Có thể chạy MySQL nhanh qua [`docker-compose.yml`](docker-compose.yml) ở gốc repo: `docker compose up -d db`.
 
 ---
 
 ## Cấu hình môi trường / Environment Variables
 
-Tham khảo [`.env.example`](.env.example). Tách thành **hai file** riêng cho backend và frontend.
+Template đầy đủ: [`backend/.env.example`](backend/.env.example). Sao chép sang `backend/.env` rồi điền giá trị.
 
 ### Backend — `backend/.env`
 
-| Biến / Variable | Bắt buộc / Required | Mô tả / Description |
+| Biến / Variable | Bắt buộc | Mô tả |
 |---|---|---|
-| `LISTEN_PORT` | optional (mặc định 3001) | Cổng HTTP của API. |
-| `JWT_SECRET` | yes | Khoá ký JWT. **Phải đổi** khi triển khai production. |
-| `DB_HOST` | yes | Hostname MySQL (ví dụ `127.0.0.1`). |
-| `DB_PORT` | yes | Cổng MySQL (mặc định `3306`). |
-| `DB_USER` | yes | Tài khoản MySQL. |
-| `DB_PASS` | yes | Mật khẩu MySQL. |
-| `DB_NAME` | yes | Tên database (ví dụ `qli_ktx`). |
-| `MAIL_HOST` | optional | SMTP host (cho [`MailService`](backend/src/modules/mail/mail.service.ts)). |
-| `MAIL_PORT` | optional | Cổng SMTP (587 / 465). |
-| `MAIL_USER` | optional | Tài khoản SMTP. |
-| `MAIL_PASS` | optional | Mật khẩu SMTP. |
-| `MAIL_FROM` | optional | Địa chỉ người gửi, ví dụ `KTX <no-reply@school.edu.vn>`. |
-| `MAIL_SECURE` | optional | `true`/`1` để bật TLS (thường dùng với port 465). |
-| `VNPAY_TMN_CODE` | optional | Mã website VNPay. |
-| `VNPAY_HASH_SECRET` | optional | Secret để ký `vnp_SecureHash`. |
-| `VNPAY_URL` | optional | URL gateway (sandbox/production). |
-| `VNPAY_RETURN_URL` | optional | URL trình duyệt quay lại sau thanh toán. |
-| `VNPAY_IPN_URL` | optional | URL nhận IPN từ VNPay. |
+| `NODE_ENV` | yes | `development` / `production`. Production sẽ tắt TypeORM `synchronize`. |
+| `LISTEN_PORT` | optional (3001) | Cổng HTTP của API. |
+| `CORS_ORIGIN` | yes | Domain frontend, cách nhau bằng dấu phẩy nếu nhiều. |
+| `APP_URL` | yes | URL frontend, dùng build link reset password trong email. |
+| `TRUST_PROXY` | optional | Số hop reverse proxy (vd `1` nếu sau nginx). Bỏ trống khi local. |
+| `JWT_SECRET` | **yes** | **>= 32 ký tự**, backend không start nếu thiếu/ngắn. Tạo: `openssl rand -hex 32`. |
+| `DB_HOST` `DB_PORT` `DB_USER` `DB_PASS` `DB_NAME` | yes | Kết nối MySQL 8. |
+| `MAIL_HOST` `MAIL_PORT` `MAIL_USER` `MAIL_PASS` `MAIL_FROM` `MAIL_SECURE` | optional | Cấu hình SMTP. Khi thiếu, reset link log ra console (dev). |
+| `VNPAY_TMN_CODE` `VNPAY_HASH_SECRET` `VNPAY_URL` `VNPAY_RETURN_URL` | optional | Credentials VNPay sandbox/production. Khi thiếu, endpoint VNPay trả lỗi rõ ràng. |
 
 ### Frontend — `frontend/.env.local`
 
-| Biến / Variable | Mô tả / Description |
+| Biến | Mô tả |
 |---|---|
-| `NEXT_PUBLIC_API_URL` | URL gốc của backend (mặc định `http://localhost:3001`). Dùng bởi [`frontend/lib/api.ts`](frontend/lib/api.ts). |
+| `NEXT_PUBLIC_API_URL` | URL gốc backend (mặc định `http://localhost:3001`). Dùng bởi [`frontend/lib/api.ts`](frontend/lib/api.ts). |
 
 ---
 
@@ -218,9 +212,16 @@ CREATE DATABASE qli_ktx
 
 ```bash
 cd backend
-cp ../.env.example .env       # rồi sửa lại DB_*, JWT_SECRET, ...
+cp .env.example .env          # rồi sửa lại DB_*, JWT_SECRET (>=32 ký tự), ...
 npm install
 npm run start:dev             # http://localhost:3001  (Swagger: /api)
+```
+
+Tạo `JWT_SECRET` nhanh:
+```bash
+openssl rand -hex 32
+# hoặc
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Các script khác (xem [`backend/package.json`](backend/package.json)):
@@ -261,7 +262,7 @@ npm run lint                  # ESLint
 
 ## Database & Migrations
 
-- TypeORM được cấu hình `synchronize: true` ở dev (xem [`backend/src/database/database.config.ts`](backend/src/database/database.config.ts)) — schema tự sinh từ entity mỗi khi chạy. **Không bật ở production.**
+- TypeORM tự bật `synchronize` ở dev và **tự tắt khi `NODE_ENV=production`** (xem [`backend/src/database/database.config.ts`](backend/src/database/database.config.ts)). Production phải quản lý schema bằng migration.
 - Các thay đổi schema không thể tự sinh (soft delete, indexes, seed dữ liệu mặc định, bảng `payments`, `buildings`, `floors`, `audit_logs`…) được viết tay dưới dạng file `.sql` trong [`backend/migrations/`](backend/migrations/):
   - [`20260413120000_add_payments_and_rooms_soft_delete.sql`](backend/migrations/20260413120000_add_payments_and_rooms_soft_delete.sql)
   - [`20260414000000_buildings_floors_staff_scope_audit_repair_room.sql`](backend/migrations/20260414000000_buildings_floors_staff_scope_audit_repair_room.sql)
@@ -286,8 +287,9 @@ mysql -u <user> -p qli_ktx < backend/migrations/20260414000000_buildings_floors_
 | `/` | public | Landing page (xem [`frontend/app/page.tsx`](frontend/app/page.tsx)). |
 | `/login` | public | Đăng nhập. |
 | `/register-student` | public | Đăng ký nội trú. |
-| `/forgot-password` | public | Yêu cầu đặt lại mật khẩu. |
+| `/forgot-password` | public | Yêu cầu đặt lại mật khẩu (link gửi qua email). |
 | `/reset-password` | public | Đặt lại mật khẩu bằng token. |
+| `/payment/vnpay-return` | public | Trang xử lý redirect sau khi user thanh toán VNPay. |
 | `/dashboard` | logged-in | Dashboard tổng quan (cards lọc theo role). |
 | `/dashboard/profile` | student | Hồ sơ sinh viên. |
 | `/dashboard/repair-requests` | student/staff | Báo cáo & xử lý sự cố. |
@@ -307,21 +309,25 @@ mysql -u <user> -p qli_ktx < backend/migrations/20260414000000_buildings_floors_
 ### Backend (NestJS)
 
 - `GET /` — health check (xem [`backend/src/app.controller.ts`](backend/src/app.controller.ts)).
-- `POST /auth/register`, `POST /auth/login`, `POST /auth/forgot-password`, `POST /auth/reset-password` — xem [`backend/src/modules/auth/auth.controller.ts`](backend/src/modules/auth/auth.controller.ts).
-- `GET /uploads/*` — phục vụ file tĩnh từ thư mục `backend/uploads/`.
+- `POST /auth/login`, `POST /auth/forgot-password`, `POST /auth/reset-password` — xem [`backend/src/modules/auth/auth.controller.ts`](backend/src/modules/auth/auth.controller.ts). Không có `/auth/register` công khai — account được tạo qua check-in hoặc admin panel.
+- `POST /vnpay/create-payment-url`, `GET /vnpay/ipn`, `GET /vnpay/return` — VNPay payment flow (xem [`backend/src/modules/vnpay/vnpay.controller.ts`](backend/src/modules/vnpay/vnpay.controller.ts)).
+- `POST /dorm-registrations/public/apply` — endpoint duy nhất sinh viên dùng được mà không cần đăng nhập, để nộp đơn vào KTX.
+- `GET /uploads/*` — phục vụ file tĩnh với `Content-Disposition: attachment` (chống XSS).
 - `GET /api` — Swagger UI (mọi endpoint khác được liệt kê đầy đủ ở đây).
 
 ---
 
 ## Ghi chú phát triển / Development Notes
 
-- **CORS** chỉ mở cho `http://localhost:3000` ở [`backend/src/main.ts`](backend/src/main.ts). Khi đổi cổng/host frontend, nhớ cập nhật.
-- Mọi endpoint **mặc định cần JWT** (do `JwtAuthGuard` được đăng ký globally trong [`backend/src/app.module.ts`](backend/src/app.module.ts)). Dùng decorator `@Public()` từ [`backend/src/modules/auth/public.decorator.ts`](backend/src/modules/auth/public.decorator.ts) để bỏ qua guard cho các endpoint công khai.
-- Kiểm soát quyền theo role bằng decorator `@Roles(...)` + `RolesGuard` ([`backend/src/modules/auth/roles.guard.ts`](backend/src/modules/auth/roles.guard.ts)).
-- Frontend lưu token trong `localStorage` dưới key `token`. Helper [`requireAuth`](frontend/lib/auth.ts) dùng cho các trang yêu cầu đăng nhập, [`apiFetch`](frontend/lib/api.ts) gọi API với `cache: 'no-store'`.
-- TypeORM `synchronize: true` đang bật — **chỉ dùng ở dev**. Production phải tắt và quản lý schema bằng migration.
-- Forgot password hiện trả về `resetToken` trong response (chỉ phục vụ test); thay bằng gửi email khi đưa lên production — xem [`backend/src/modules/auth/auth.service.ts`](backend/src/modules/auth/auth.service.ts).
-- Module `mail/` và `vnpay/` mới ở mức scaffold (load config) — sẽ được hoàn thiện trong các phase sau.
+- **CORS** đọc từ env `CORS_ORIGIN`, hỗ trợ nhiều domain (cách nhau dấu phẩy).
+- Mọi endpoint **mặc định cần JWT** (do `JwtAuthGuard` global) và phải khai báo `@Roles(...)` hoặc `@Public()` — `RolesGuard` mặc định **deny** nếu thiếu cả hai (xem [`backend/src/modules/auth/roles.guard.ts`](backend/src/modules/auth/roles.guard.ts)).
+- **Rate limit:** 5 req/phút cho `/auth/*` qua `@nestjs/throttler`; chung 60 req/phút cho các endpoint khác.
+- **Password policy:** ≥ 10 ký tự, có upper + lower + digit (xem [`backend/src/modules/auth/dto/password.validator.ts`](backend/src/modules/auth/dto/password.validator.ts)).
+- **Reset password** gửi link qua SMTP (token SHA-256 indexed, hết hạn 1 giờ). Khi SMTP chưa cấu hình, link log ra console để test dev.
+- **File upload** dùng helper [`safe-upload.ts`](backend/src/common/helpers/safe-upload.ts) — sanitize filename, UUID, kiểm tra magic bytes (chống file giả mạo extension).
+- **Logger** redact mọi field nhạy cảm (`password`, `token`, `authorization`, `vnp_securehash`, ...) trước khi ghi log.
+- Frontend lưu token trong `localStorage` dưới key `token`. Helper [`requireAuth`](frontend/lib/auth.ts) cho các trang cần đăng nhập, [`apiFetch`](frontend/lib/api.ts) gọi API với `cache: 'no-store'`.
+- Production deployment: xem [`DEPLOY.md`](DEPLOY.md) ở gốc repo — hướng dẫn chi tiết VPS + nginx + HTTPS + backup + troubleshooting.
 
 ---
 
