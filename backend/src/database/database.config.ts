@@ -10,6 +10,6 @@ export const databaseConfig = (configService: ConfigService): TypeOrmModuleOptio
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true, // Lưu ý: Chỉ bật ở Dev, tự đồng bộ thay đổi table schema
+        synchronize: configService.get<string>('NODE_ENV') !== 'production',
     };
 };

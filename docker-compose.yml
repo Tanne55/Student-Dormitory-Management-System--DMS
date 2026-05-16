@@ -1,17 +1,22 @@
 version: '3.8'
 services:
   db:
-    image: postgres:15-alpine
-    container_name: nest-next-postgres
+    image: mysql:8.0
+    container_name: qliktx-mysql
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: qliktx
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:-123456}
+      MYSQL_DATABASE: ${DB_NAME:-qliktx}
+      MYSQL_USER: ${DB_USER:-qliktx}
+      MYSQL_PASSWORD: ${DB_PASS:-123456}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-3306}:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  postgres_data:
+  mysql_data:

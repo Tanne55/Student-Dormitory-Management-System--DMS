@@ -32,11 +32,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.enableCors({
-    origin: 'http://localhost:3000', // your Next.js port
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'], // ✅ important!
+  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
 
+  app.enableCors({
+    origin: corsOrigins,
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   await app.listen(process.env.LISTEN_PORT ?? 3001);
