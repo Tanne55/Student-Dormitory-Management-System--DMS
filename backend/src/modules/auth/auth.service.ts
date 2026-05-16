@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException, Logger } from '@n
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { Repository, Not, IsNull } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account, AccountRole, AccountStatus } from './entities/account.entity';
 import { Student } from '../students/entities/student.entity';
@@ -86,7 +86,7 @@ export class AuthService {
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = await bcrypt.hash(resetToken, 10);
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
     account.resetPasswordToken = hashedToken;
     account.resetPasswordExpires = new Date(Date.now() + 3600000);
@@ -119,18 +119,10 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
-    const accountsWithToken = await this.accountsRepo.find({
-      where: { resetPasswordToken: Not(IsNull()) }
+    const hashedToken = crypto.createHash('sha256').update(dto.token).digest('hex');
+    const foundAccount = await this.accountsRepo.findOne({
+      where: { resetPasswordToken: hashedToken },
     });
-
-    let foundAccount: Account | null = null;
-
-    for (const account of accountsWithToken) {
-      if (account.resetPasswordToken && await bcrypt.compare(dto.token, account.resetPasswordToken)) {
-        foundAccount = account;
-        break;
-      }
-    }
 
     if (!foundAccount) {
       throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn.');
