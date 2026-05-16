@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsStrongPassword } from '../password.validator';
 
 export class ResetPasswordDto {
     @ApiProperty({ description: 'Mã xác nhận để đổi mật khẩu' })
@@ -9,6 +10,6 @@ export class ResetPasswordDto {
 
     @ApiProperty({ description: 'Mật khẩu mới' })
     @IsString()
-    @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
+    @IsStrongPassword()
     newPassword: string;
 }
