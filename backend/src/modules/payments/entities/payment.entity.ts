@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 import { Invoice } from '../../invoices/entities/invoice.entity';
 
 export enum PaymentStatus {
+  PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
 }
@@ -9,6 +10,7 @@ export enum PaymentStatus {
 export enum PaymentMethod {
   CASH = 'CASH',
   BANK_TRANSFER = 'BANK_TRANSFER',
+  VNPAY = 'VNPAY',
   OTHER = 'OTHER',
 }
 
@@ -20,6 +22,9 @@ export class Payment {
   @ManyToOne(() => Invoice, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'invoice_id' })
   invoice: Invoice;
+
+  @Column({ name: 'invoice_id' })
+  invoiceId: string;
 
   @Column({ type: 'int' })
   amount: number;
@@ -36,8 +41,11 @@ export class Payment {
   @Column({ name: 'confirmed_by_account_id', type: 'int', nullable: true })
   confirmedByAccountId: number | null;
 
-  @Column({ name: 'paid_at', type: 'datetime' })
-  paidAt: Date;
+  @Column({ name: 'transaction_ref', type: 'varchar', length: 100, nullable: true, unique: true })
+  transactionRef: string | null;
+
+  @Column({ name: 'paid_at', type: 'datetime', nullable: true })
+  paidAt: Date | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
