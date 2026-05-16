@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Be_Vietnam_Pro } from "next/font/google";
 import { API_BASE, apiFetch } from "@/lib/api";
+import { Button } from "@/components/ui";
 
 const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
@@ -99,17 +100,11 @@ export default function Home() {
           </p>
 
           <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/login"
-              className="w-full transform rounded-full bg-gradient-to-r from-primary to-primary-container px-10 py-4 text-center text-lg font-bold text-on-primary shadow-xl shadow-primary/25 transition-all active:scale-95 sm:w-auto"
-            >
-              Đăng nhập hệ thống
+            <Link href="/login">
+              <Button variant="gradient" size="lg">Đăng nhập hệ thống</Button>
             </Link>
-            <Link
-              href="/register-student"
-              className="w-full transform rounded-full border-2 border-primary/10 bg-surface-container-lowest px-10 py-4 text-center text-lg font-bold text-primary shadow-sm transition-all hover:border-primary/30 active:scale-95 sm:w-auto"
-            >
-              Đăng ký nội trú
+            <Link href="/register-student">
+              <Button variant="secondary" size="lg">Đăng ký nội trú</Button>
             </Link>
           </div>
 
