@@ -24,6 +24,7 @@ export class StudentsController {
     };
   }
 
+  @Roles('student', 'staff', 'admin')
   @ApiBearerAuth()
   @Get('profile')
   @ApiOperation({ summary: 'Get current student profile' })
