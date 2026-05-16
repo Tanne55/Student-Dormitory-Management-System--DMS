@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -8,7 +8,6 @@ import { Account, AccountRole, AccountStatus } from './entities/account.entity';
 import { Student } from '../students/entities/student.entity';
 import { Staff } from '../staffs/entities/staff.entity';
 import { MailService } from '../mail/mail.service';
-import { RegisterAccountDto } from './dto/requests/register-account.dto';
 import { LoginDto } from './dto/requests/login.dto';
 import { ForgotPasswordDto } from './dto/requests/forgot-password.dto';
 import { ResetPasswordDto } from './dto/requests/reset-password.dto';
@@ -26,28 +25,6 @@ export class AuthService {
     private configService: ConfigService,
     private mailService: MailService,
   ) { }
-
-  async register(dto: RegisterAccountDto) {
-    const existing = await this.accountsRepo.findOne({ where: { username: dto.username } });
-    if (existing) throw new ConflictException('Username already exists');
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    const newAccount = this.accountsRepo.create({
-      username: dto.username,
-      passwordHash: hashedPassword,
-      role: AccountRole.STUDENT,
-      status: AccountStatus.ACTIVE,
-    });
-
-    const saved = await this.accountsRepo.save(newAccount);
-    return {
-      accountId: saved.accountId,
-      username: saved.username,
-      role: saved.role,
-      status: saved.status,
-    };
-  }
 
   async validateUser(username: string, pass: string): Promise<Account> {
     if (!username || !pass) throw new UnauthorizedException('Invalid credentials');
