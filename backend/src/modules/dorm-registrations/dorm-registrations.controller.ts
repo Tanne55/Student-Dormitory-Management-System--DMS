@@ -13,18 +13,22 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DormRegistrationsService } from './dorm-registrations.service';
-import { extname } from 'path';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
+import * as path from 'path';
 import { Roles } from '../auth/roles.decorator';
 import { Public } from '../auth/public.decorator';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessActor } from '../staffs/scope.service';
+import { buildSafeFilename, assertFileMagic } from '../../common/helpers/safe-upload';
 
 const uploadDir = './uploads/priority';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+const PRIORITY_ALLOWED_EXTS = ['.jpg', '.jpeg', '.png', '.pdf'];
+const PRIORITY_ALLOWED_MIMES = ['image/jpeg', 'image/png', 'application/pdf'];
 
 @ApiTags('dorm-registrations')
 @Controller('dorm-registrations')
@@ -74,20 +78,15 @@ export class DormRegistrationsController {
       storage: diskStorage({
         destination: uploadDir,
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+          try {
+            const { safeBase, safeExt } = buildSafeFilename(file.originalname, PRIORITY_ALLOWED_EXTS);
+            cb(null, `${safeBase}${safeExt}`);
+          } catch (err) {
+            cb(err as Error, '');
+          }
         },
       }),
-      fileFilter: (req, file, cb) => {
-        if (file.mimetype.match(/\/(jpg|jpeg|png|pdf)$/)) {
-          cb(null, true);
-        } else {
-          cb(new BadRequestException('Unsupported file type. Only JPG, PNG and PDF are allowed.'), false);
-        }
-      },
-      limits: {
-        fileSize: 5 * 1024 * 1024,
-      },
+      limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
   async applyDormRegistration(
@@ -98,6 +97,10 @@ export class DormRegistrationsController {
     @Body('priority_type') priorityType: string,
     @UploadedFile() file?: Express.Multer.File,
   ) {
+    if (file) {
+      await assertFileMagic(path.join(uploadDir, file.filename), PRIORITY_ALLOWED_MIMES);
+    }
+
     let applicationData;
     try {
       applicationData = JSON.parse(applicationDataString);
