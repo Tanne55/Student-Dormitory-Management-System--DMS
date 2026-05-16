@@ -4,6 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { Account } from './entities/account.entity';
+import { Student } from '../students/entities/student.entity';
+import { Staff } from '../staffs/entities/staff.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
@@ -11,7 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Account]),
+    TypeOrmModule.forFeature([Account, Student, Staff]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

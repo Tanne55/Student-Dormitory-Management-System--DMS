@@ -1,9 +1,13 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { Repository, Not, IsNull } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account, AccountRole, AccountStatus } from './entities/account.entity';
+import { Student } from '../students/entities/student.entity';
+import { Staff } from '../staffs/entities/staff.entity';
+import { MailService } from '../mail/mail.service';
 import { RegisterAccountDto } from './dto/requests/register-account.dto';
 import { LoginDto } from './dto/requests/login.dto';
 import { ForgotPasswordDto } from './dto/requests/forgot-password.dto';
@@ -12,9 +16,15 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(Account) private accountsRepo: Repository<Account>,
+    @InjectRepository(Student) private studentsRepo: Repository<Student>,
+    @InjectRepository(Staff) private staffsRepo: Repository<Staff>,
     private jwtService: JwtService,
+    private configService: ConfigService,
+    private mailService: MailService,
   ) { }
 
   async register(dto: RegisterAccountDto): Promise<Account> {
@@ -55,36 +65,54 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string; resetToken?: string }> {
+  async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string }> {
+    const genericMessage = 'Nếu tài khoản tồn tại, email khôi phục đã được gửi.';
+
     const account = await this.accountsRepo.findOne({ where: { username: dto.username } });
     if (!account) {
-      // Return success even if user not found to prevent username enumeration
-      return { message: 'Nếu tài khoản tồn tại, email khôi phục đã được gửi.' };
+      return { message: genericMessage };
     }
 
-    // Generate a secure random token
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const email = await this.getEmailForAccount(account.accountId, account.role);
+    if (!email) {
+      this.logger.warn(`forgotPassword: account ${account.accountId} chua co email lien ket`);
+      return { message: genericMessage };
+    }
 
-    // Hash before saving to DB
+    const resetToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = await bcrypt.hash(resetToken, 10);
 
     account.resetPasswordToken = hashedToken;
-    account.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
-
+    account.resetPasswordExpires = new Date(Date.now() + 3600000);
     await this.accountsRepo.save(account);
 
-    // In a real application, send this token via email.
-    // Here we return it for testing purposes.
-    return {
-      message: 'Token khôi phục đã được tạo thành công!',
-      resetToken
-    };
+    const appUrl = this.configService.get<string>('APP_URL') ?? 'http://localhost:3000';
+    const resetLink = `${appUrl.replace(/\/$/, '')}/reset-password?token=${resetToken}`;
+
+    try {
+      if (this.mailService.isConfigured()) {
+        await this.mailService.sendMail({
+          to: email,
+          subject: 'Khôi phục mật khẩu - QLKTX',
+          text: `Bạn vừa yêu cầu khôi phục mật khẩu. Truy cập đường dẫn sau để đặt lại (hết hạn sau 1 giờ):\n\n${resetLink}\n\nNếu không phải bạn, vui lòng bỏ qua email này.`,
+          html: `
+            <p>Bạn vừa yêu cầu khôi phục mật khẩu cho tài khoản <b>${account.username}</b>.</p>
+            <p>Nhấn vào liên kết dưới đây để đặt lại (hết hạn sau 1 giờ):</p>
+            <p><a href="${resetLink}">${resetLink}</a></p>
+            <p>Nếu không phải bạn, vui lòng bỏ qua email này.</p>
+          `,
+        });
+      } else {
+        this.logger.warn(`MailService chua cau hinh; reset link cho ${account.username}: ${resetLink}`);
+      }
+    } catch (err) {
+      this.logger.error(`Khong gui duoc email reset cho ${account.username}`, err as Error);
+    }
+
+    return { message: genericMessage };
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
-    // Find all users with a reset token (in practice, we'd query carefully since we only have the token)
-    // Actually, normally the frontend sends user ID or username along with the token, 
-    // or we query all users that have a token set. For simplicity in this structure where token is the only input:
     const accountsWithToken = await this.accountsRepo.find({
       where: { resetPasswordToken: Not(IsNull()) }
     });
@@ -106,7 +134,6 @@ export class AuthService {
       throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn.');
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
 
     foundAccount.passwordHash = hashedPassword;
@@ -116,5 +143,14 @@ export class AuthService {
     await this.accountsRepo.save(foundAccount);
 
     return { message: 'Mật khẩu đã được thay đổi thành công!' };
+  }
+
+  private async getEmailForAccount(accountId: number, role: AccountRole): Promise<string | null> {
+    if (role === AccountRole.STUDENT) {
+      const student = await this.studentsRepo.findOne({ where: { accountId } });
+      return student?.emailSchool?.trim() || student?.emailPersonal?.trim() || null;
+    }
+    const staff = await this.staffsRepo.findOne({ where: { accountId } });
+    return staff?.email?.trim() || null;
   }
 }
