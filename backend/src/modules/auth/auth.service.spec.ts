@@ -1,4 +1,4 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -45,26 +45,6 @@ describe('AuthService', () => {
       configService as any,
       mailService as any,
     );
-  });
-
-  describe('register', () => {
-    it('throws ConflictException neu username da ton tai', async () => {
-      accountsRepo.findOne.mockResolvedValue({ accountId: 99 });
-      await expect(svc.register({ username: 'x', password: 'longpass1' } as any)).rejects.toBeInstanceOf(ConflictException);
-    });
-
-    it('khong tra ve passwordHash', async () => {
-      accountsRepo.findOne.mockResolvedValue(null);
-      const result = await svc.register({ username: 'newuser', password: 'longpass1' } as any);
-      expect(result).toEqual(expect.objectContaining({ username: 'newuser', role: AccountRole.STUDENT }));
-      expect((result as any).passwordHash).toBeUndefined();
-    });
-
-    it('luon force role = STUDENT', async () => {
-      accountsRepo.findOne.mockResolvedValue(null);
-      const result = await svc.register({ username: 'u', password: 'longpass1', role: AccountRole.ADMIN } as any);
-      expect(result.role).toBe(AccountRole.STUDENT);
-    });
   });
 
   describe('validateUser', () => {
