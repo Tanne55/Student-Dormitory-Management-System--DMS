@@ -29,6 +29,8 @@ export class VnpayController {
       payerStudentCode: dto.payerStudentCode ?? null,
       ipAddress: stripIpv6Prefix(ip),
       bankCode: dto.bankCode,
+      actorAccountId: req.user?.accountId,
+      actorRole: req.user?.role ?? 'student',
     });
   }
 
