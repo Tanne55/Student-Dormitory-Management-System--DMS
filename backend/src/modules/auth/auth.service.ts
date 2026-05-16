@@ -27,7 +27,7 @@ export class AuthService {
     private mailService: MailService,
   ) { }
 
-  async register(dto: RegisterAccountDto): Promise<Account> {
+  async register(dto: RegisterAccountDto) {
     const existing = await this.accountsRepo.findOne({ where: { username: dto.username } });
     if (existing) throw new ConflictException('Username already exists');
 
@@ -36,11 +36,17 @@ export class AuthService {
     const newAccount = this.accountsRepo.create({
       username: dto.username,
       passwordHash: hashedPassword,
-      role: dto.role || AccountRole.STUDENT,
+      role: AccountRole.STUDENT,
       status: AccountStatus.ACTIVE,
     });
 
-    return this.accountsRepo.save(newAccount);
+    const saved = await this.accountsRepo.save(newAccount);
+    return {
+      accountId: saved.accountId,
+      username: saved.username,
+      role: saved.role,
+      status: saved.status,
+    };
   }
 
   async validateUser(username: string, pass: string): Promise<Account> {

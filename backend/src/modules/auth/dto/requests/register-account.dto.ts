@@ -1,15 +1,11 @@
-import { IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
-import { AccountRole } from '../../entities/account.entity';
+import { IsString, MinLength } from 'class-validator';
 
 export class RegisterAccountDto {
   @IsString()
+  @MinLength(3)
   username: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
   password: string;
-
-  @IsOptional()
-  @IsEnum(AccountRole)
-  role?: AccountRole; // optional, defaults to 'STUDENT' in service
 }
