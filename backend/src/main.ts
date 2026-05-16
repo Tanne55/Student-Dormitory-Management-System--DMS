@@ -36,6 +36,12 @@ async function bootstrap() {
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
+    setHeaders: (res, filePath) => {
+      // Force download de tranh XSS qua SVG/HTML disguise
+      const fileName = filePath.split(/[\\/]/).pop() ?? 'file';
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+    },
   });
 
   //config swagger
