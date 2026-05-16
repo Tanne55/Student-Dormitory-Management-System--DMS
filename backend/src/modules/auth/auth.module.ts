@@ -9,6 +9,7 @@ import { Staff } from '../staffs/entities/staff.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { requireJwtSecret } from './jwt-secret.helper';
 
 @Global()
 @Module({
@@ -18,7 +19,7 @@ import { JwtStrategy } from './jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || '516b508ace08b91b46ed9b88b9ef0361',
+        secret: requireJwtSecret(configService),
         signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
