@@ -19,7 +19,7 @@ export type InvoiceListRow = {
   dueDate: Date;
   paidBy: string | null;
   paidAt: Date | null;
-  room: Pick<Room, 'id' | 'roomNumber' | 'roomType' | 'capacity' | 'currentOccupancy' | 'gender' | 'status' | 'floorId'> | null;
+  room: Pick<Room, 'id' | 'roomNumber' | 'roomTypeId' | 'capacity' | 'currentOccupancy' | 'gender' | 'status' | 'floorId'> | null;
   buildingCode?: string | null;
   buildingName?: string | null;
   floorNumber?: number | null;
@@ -85,7 +85,7 @@ export class InvoicesService {
             id: r.id,
             floorId: r.floorId,
             roomNumber: r.roomNumber,
-            roomType: r.roomType,
+            roomTypeId: r.roomTypeId,
             capacity: r.capacity,
             currentOccupancy: r.currentOccupancy,
             gender: r.gender,
