@@ -175,7 +175,7 @@ export class DormExtensionsService {
             if (room) {
                 const reg = this.dormRegRepo.create({
                     studentCode: extension.studentCode,
-                    roomType: room.roomType,
+                    roomType: room.roomTypeId,
                     semester: extension.semester,
                     status: DormRegistrationStatus.APPROVED,
                     roomId: room.id,

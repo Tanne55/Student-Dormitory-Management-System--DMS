@@ -38,7 +38,7 @@ export type InvoicePaymentHistoryRow = {
   status: string;
   payerStudentCode: string | null;
   confirmedByAccountId: number | null;
-  paidAt: Date;
+  paidAt: Date | null;
   createdAt: Date;
 };
 
@@ -53,10 +53,10 @@ export class InvoicesService {
   ) {}
 
   private summarizePayments(inv: Invoice) {
-    const success = (inv.payments || []).filter((p) => p.status === PaymentStatus.SUCCESS);
+    const success = (inv.payments || []).filter((p) => p.status === PaymentStatus.SUCCESS && p.paidAt != null);
     const paidAmount = success.reduce((sum, p) => sum + Number(p.amount || 0), 0);
     const latestPaymentAt = success.length
-      ? new Date(Math.max(...success.map((p) => new Date(p.paidAt).getTime())))
+      ? new Date(Math.max(...success.map((p) => new Date(p.paidAt as Date).getTime())))
       : null;
     return {
       paidAmount,
