@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getUserFromToken } from '@/lib/auth';
 import { API_BASE, authHeaders, apiFetch } from '@/lib/api';
+import { Badge, Button, Card, EmptyState, PageHeader, Table } from '@/components/ui';
 
 export default function DormApprovalsPage() {
   const router = useRouter();
@@ -29,11 +30,8 @@ export default function DormApprovalsPage() {
         }
         return res.json();
       })
-      .then((data) => {
-        setRegistrations(Array.isArray(data) ? data : []);
-      })
+      .then((data) => setRegistrations(Array.isArray(data) ? data : []))
       .catch((err) => {
-        console.error(err);
         setErrorMsg(err.message || 'Không tải được danh sách đơn chờ duyệt.');
         setRegistrations([]);
       })
@@ -41,76 +39,96 @@ export default function DormApprovalsPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-6">Staff Dashboard - Dorm Approvals</h1>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <PageHeader
+        title="Duyệt đơn đăng ký nội trú"
+        description="Xem xét và phê duyệt các đơn xin vào ở KTX của sinh viên."
+        icon={<span className="material-symbols-outlined">rule_folder</span>}
+      />
 
-        {errorMsg && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{errorMsg}</div>
-        )}
+      {errorMsg && (
+        <div className="bg-error-container text-on-error-container px-6 py-4 rounded-2xl flex items-center gap-3">
+          <span className="material-symbols-outlined text-error" style={{ fontVariationSettings: "'FILL' 1" }}>
+            error
+          </span>
+          <span className="text-sm font-bold">{errorMsg}</span>
+        </div>
+      )}
 
-        <div className="bg-white shadow sm:rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Code</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                    Loading...
-                  </td>
-                </tr>
-              ) : registrations.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                    No pending applications found.
-                  </td>
-                </tr>
-              ) : (
-                registrations.map((reg: any) => {
-                  let appData: any = reg.applicationData;
+      <Card padding="sm">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-48">
+            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : (
+          <Table
+            rows={registrations}
+            getRowKey={(r) => r.id}
+            empty={
+              <EmptyState
+                icon="task_alt"
+                title="Không có đơn chờ duyệt"
+                description="Tất cả các đơn đăng ký đã được xử lý."
+              />
+            }
+            columns={[
+              {
+                key: 'student',
+                header: 'MSSV',
+                render: (r) => (
+                  <span className="font-black text-primary font-mono">{r.studentCode}</span>
+                ),
+              },
+              {
+                key: 'name',
+                header: 'Họ tên',
+                render: (r) => {
+                  let appData: any = r.applicationData;
                   if (typeof appData === 'string') {
                     try {
                       appData = JSON.parse(appData);
-                    } catch {
-                      /* ignore */
-                    }
+                    } catch {}
                   }
                   return (
-                    <tr key={reg.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{reg.studentCode}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{appData?.basic?.fullName || 'N/A'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reg.semester}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phòng {reg.roomType} người</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                          {reg.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Link
-                          href={`/staff/dorm-approvals/${reg.id}`}
-                          className="text-indigo-600 hover:text-indigo-900 font-semibold bg-indigo-50 px-3 py-1.5 rounded"
-                        >
-                          Review & Approve
-                        </Link>
-                      </td>
-                    </tr>
+                    <span className="font-bold text-on-surface">
+                      {appData?.basic?.fullName || 'N/A'}
+                    </span>
                   );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                },
+              },
+              {
+                key: 'semester',
+                header: 'Học kỳ',
+                render: (r) => <span className="text-on-surface-variant">{r.semester}</span>,
+              },
+              {
+                key: 'roomType',
+                header: 'Loại phòng',
+                render: (r) => (
+                  <span className="text-on-surface-variant">Phòng {r.roomType} người</span>
+                ),
+              },
+              {
+                key: 'status',
+                header: 'Trạng thái',
+                render: () => <Badge tone="pending">Chờ duyệt</Badge>,
+              },
+              {
+                key: 'actions',
+                header: 'Thao tác',
+                align: 'right',
+                render: (r) => (
+                  <Link href={`/staff/dorm-approvals/${r.id}`}>
+                    <Button size="sm" variant="gradient">
+                      Xem & Duyệt
+                    </Button>
+                  </Link>
+                ),
+              },
+            ]}
+          />
+        )}
+      </Card>
     </div>
   );
 }
