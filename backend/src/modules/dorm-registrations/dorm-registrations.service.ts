@@ -59,7 +59,7 @@ export class DormRegistrationsService {
 
         const scope = await this.scopeService.getFloorScope(actor);
         const qb = this.roomRepository.createQueryBuilder('room')
-           .where('room.roomType = :roomType', { roomType })
+           .where('room.room_type_id = :roomType', { roomType })
            .andWhere('room.gender IN (:...genders)', { genders: [gender, 'Mixed'] })
            .andWhere('room.capacity > room.currentOccupancy');
         if (scope !== 'all') {

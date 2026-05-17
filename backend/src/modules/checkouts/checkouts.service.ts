@@ -82,7 +82,7 @@ export class CheckoutsService {
                 room: room ? {
                     id: room.id,
                     roomNumber: room.roomNumber,
-                    roomType: room.roomType,
+                    roomTypeId: room.roomTypeId,
                     currentOccupancy: room.currentOccupancy,
                     capacity: room.capacity
                 } : null,
