@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE, apiFetch, authHeaders } from '@/lib/api';
 import { requireAuth } from '@/lib/auth';
+import { Button, Card, EmptyState, Field, Input, PageHeader, Table } from '@/components/ui';
 
 type AuditRow = {
   id: string;
@@ -61,100 +62,110 @@ export default function AuditLogsPage() {
     void load();
   }
 
-  const InputClass = "bg-surface outline-none border border-outline-variant/50 focus:border-primary px-3 py-2.5 rounded-xl transition-colors font-medium text-sm text-on-surface";
-
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest p-6 rounded-[24px] border border-outline-variant/10 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
-            <span className="material-symbols-outlined text-2xl">manage_search</span>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-on-surface tracking-tight">Nhật ký thao tác</h1>
-            <p className="text-sm text-on-surface-variant font-medium">Chỉ quản trị viên. Truy vết hành vi hệ thống.</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Nhật ký thao tác"
+        description="Truy vết hành vi hệ thống — chỉ quản trị viên."
+        icon={<span className="material-symbols-outlined">manage_search</span>}
+      />
 
-      {/* Filters */}
-      <form onSubmit={onFilter} className="bg-surface-container-lowest p-5 rounded-[20px] border border-outline-variant/10 shadow-sm flex flex-wrap gap-4 items-end">
-        <div>
-          <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">entity_type</label>
-          <input className={`${InputClass} w-40`} value={entityType} onChange={(e) => setEntityType(e.target.value)} placeholder="contract" />
-        </div>
-        <div>
-          <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">actor_id</label>
-          <input className={`${InputClass} w-28`} type="number" value={actorId} onChange={(e) => setActorId(e.target.value)} placeholder="1" />
-        </div>
-        <div>
-          <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Từ</label>
-          <input className={InputClass} type="datetime-local" value={from} onChange={(e) => setFrom(e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Đến</label>
-          <input className={InputClass} type="datetime-local" value={to} onChange={(e) => setTo(e.target.value)} />
-        </div>
-        <button type="submit" className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined text-[16px]">filter_alt</span>
-          Áp dụng
-        </button>
-      </form>
+      <Card padding="md">
+        <form onSubmit={onFilter} className="flex flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-[160px]">
+            <Field label="entity_type">
+              <Input value={entityType} onChange={(e) => setEntityType(e.target.value)} placeholder="contract" />
+            </Field>
+          </div>
+          <div className="w-32">
+            <Field label="actor_id">
+              <Input type="number" value={actorId} onChange={(e) => setActorId(e.target.value)} placeholder="1" />
+            </Field>
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <Field label="Từ">
+              <Input type="datetime-local" value={from} onChange={(e) => setFrom(e.target.value)} />
+            </Field>
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <Field label="Đến">
+              <Input type="datetime-local" value={to} onChange={(e) => setTo(e.target.value)} />
+            </Field>
+          </div>
+          <Button
+            type="submit"
+            variant="gradient"
+            icon={<span className="material-symbols-outlined text-[16px]">filter_alt</span>}
+          >
+            Áp dụng
+          </Button>
+        </form>
+      </Card>
 
       {errorMsg && (
-        <div className="bg-error-container text-on-error-container px-6 py-4 rounded-xl flex items-center gap-3 border border-error/20">
-          <span className="material-symbols-outlined text-error" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+        <div className="bg-error-container text-on-error-container px-6 py-4 rounded-2xl flex items-center gap-3">
+          <span className="material-symbols-outlined text-error" style={{ fontVariationSettings: "'FILL' 1" }}>
+            error
+          </span>
           <span className="text-sm font-bold">{errorMsg}</span>
         </div>
       )}
 
-      {/* Table */}
-      <div className="bg-surface-container-lowest rounded-[24px] border border-surface-container-highest overflow-hidden shadow-sm">
+      <Card padding="sm">
         {loading ? (
           <div className="flex justify-center items-center h-48">
-            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-surface-container-low text-on-surface-variant text-[11px] uppercase tracking-wider font-bold">
-                <tr>
-                  <th className="px-6 py-4">Thời gian</th>
-                  <th className="px-6 py-4">Hành động</th>
-                  <th className="px-6 py-4">Thực thể</th>
-                  <th className="px-6 py-4">Actor</th>
-                  <th className="px-6 py-4">Chi tiết</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-surface-container-highest">
-                {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-surface-container-low/50 transition-colors align-top">
-                    <td className="px-6 py-4 text-on-surface-variant font-medium">{new Date(r.createdAt).toLocaleString('vi-VN')}</td>
-                    <td className="px-6 py-4 font-mono text-xs text-primary font-bold">{r.action}</td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-on-surface">{r.entityType}</div>
-                      <div className="text-[10px] text-outline font-mono break-all">{r.entityId}</div>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-on-surface-variant">{r.actorAccountId ?? '—'}</td>
-                    <td className="px-6 py-4 max-w-md">
-                      <pre className="text-[11px] bg-surface-container-low p-2 rounded-lg overflow-x-auto whitespace-pre-wrap break-words text-on-surface-variant">
-                        {r.metadata ? JSON.stringify(r.metadata, null, 2) : '—'}
-                      </pre>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {rows.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-48 text-on-surface-variant">
-                <span className="material-symbols-outlined text-5xl opacity-20 mb-3">search_off</span>
-                <p className="font-bold">Không có bản ghi.</p>
-              </div>
-            )}
-          </div>
+          <Table
+            rows={rows}
+            getRowKey={(r) => r.id}
+            empty={<EmptyState icon="search_off" title="Không có bản ghi" />}
+            columns={[
+              {
+                key: 'time',
+                header: 'Thời gian',
+                render: (r) => (
+                  <span className="text-on-surface-variant font-medium">
+                    {new Date(r.createdAt).toLocaleString('vi-VN')}
+                  </span>
+                ),
+              },
+              {
+                key: 'action',
+                header: 'Hành động',
+                render: (r) => <span className="font-mono text-xs text-primary font-bold">{r.action}</span>,
+              },
+              {
+                key: 'entity',
+                header: 'Thực thể',
+                render: (r) => (
+                  <div>
+                    <div className="font-bold text-on-surface">{r.entityType}</div>
+                    <div className="text-[10px] text-on-surface-variant/70 font-mono break-all">{r.entityId}</div>
+                  </div>
+                ),
+              },
+              {
+                key: 'actor',
+                header: 'Actor',
+                render: (r) => (
+                  <span className="font-bold text-on-surface-variant">{r.actorAccountId ?? '—'}</span>
+                ),
+              },
+              {
+                key: 'meta',
+                header: 'Chi tiết',
+                render: (r) => (
+                  <pre className="text-[11px] bg-surface-container-low p-2 rounded-lg overflow-x-auto whitespace-pre-wrap break-words text-on-surface-variant max-w-md">
+                    {r.metadata ? JSON.stringify(r.metadata, null, 2) : '—'}
+                  </pre>
+                ),
+              },
+            ]}
+          />
         )}
-      </div>
+      </Card>
     </div>
   );
 }
