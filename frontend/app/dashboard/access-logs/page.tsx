@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAccessLogs } from '../../../lib/api';
+import { getAccessLogs } from '@/lib/api';
+import { Badge, Button, Card, EmptyState, Field, Input, PageHeader, Table } from '@/components/ui';
 
 interface AccessLog {
   id: number;
@@ -53,156 +54,138 @@ export default function AccessLogsPage() {
   }
 
   useEffect(() => {
-    fetchLogs(1);
+    void fetchLogs(1);
   }, []);
-
-  function handleSearch() {
-    fetchLogs(1);
-  }
 
   const totalPages = Math.ceil(total / limit);
 
-  const directionBadge = (d: 'IN' | 'OUT') =>
-    d === 'IN' ? (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">
-        VÀO
-      </span>
-    ) : (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">
-        RA
-      </span>
-    );
-
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Nhật ký ra vào ký túc xá</h1>
-        <a
-          href="/kiosk"
-          target="_blank"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-        >
-          Mở cổng kiosk ↗
-        </a>
-      </div>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <PageHeader
+        title="Nhật ký ra vào ký túc xá"
+        description="Theo dõi lượt ra/vào qua hệ thống nhận diện khuôn mặt."
+        icon={<span className="material-symbols-outlined">door_sensor</span>}
+        action={
+          <a href="/kiosk" target="_blank" rel="noreferrer">
+            <Button
+              variant="secondary"
+              iconRight={<span className="material-symbols-outlined text-[18px]">open_in_new</span>}
+            >
+              Mở cổng kiosk
+            </Button>
+          </a>
+        }
+      />
 
-      {/* Filter bar */}
-      <div className="bg-white border rounded-xl p-4 flex flex-wrap gap-3 items-end">
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Mã sinh viên</label>
-          <input
-            className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="VD: SV001"
-            value={filterStudent}
-            onChange={(e) => setFilterStudent(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          />
+      <Card padding="md">
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-[180px]">
+            <Field label="Mã sinh viên">
+              <Input
+                value={filterStudent}
+                onChange={(e) => setFilterStudent(e.target.value)}
+                placeholder="VD: SV001"
+                onKeyDown={(e) => e.key === 'Enter' && fetchLogs(1)}
+              />
+            </Field>
+          </div>
+          <div className="flex-1 min-w-[160px]">
+            <Field label="Từ ngày">
+              <Input type="date" value={filterDateFrom} onChange={(e) => setFilterDateFrom(e.target.value)} />
+            </Field>
+          </div>
+          <div className="flex-1 min-w-[160px]">
+            <Field label="Đến ngày">
+              <Input type="date" value={filterDateTo} onChange={(e) => setFilterDateTo(e.target.value)} />
+            </Field>
+          </div>
+          <Button variant="gradient" onClick={() => fetchLogs(1)}>
+            Tìm kiếm
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setFilterStudent('');
+              setFilterDateFrom('');
+              setFilterDateTo('');
+              setTimeout(() => fetchLogs(1), 0);
+            }}
+          >
+            Xóa bộ lọc
+          </Button>
         </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Từ ngày</label>
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={filterDateFrom}
-            onChange={(e) => setFilterDateFrom(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Đến ngày</label>
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={filterDateTo}
-            onChange={(e) => setFilterDateTo(e.target.value)}
-          />
-        </div>
-        <button
-          onClick={handleSearch}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-        >
-          Tìm kiếm
-        </button>
-        <button
-          onClick={() => {
-            setFilterStudent('');
-            setFilterDateFrom('');
-            setFilterDateTo('');
-            setTimeout(() => fetchLogs(1), 0);
-          }}
-          className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200"
-        >
-          Xóa bộ lọc
-        </button>
-      </div>
+      </Card>
 
-      {/* Table */}
-      <div className="bg-white border rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b flex items-center justify-between">
-          <span className="text-sm text-gray-600">
+      <Card padding="sm">
+        <div className="flex items-center justify-between mb-2 px-2 py-3">
+          <span className="text-sm text-on-surface-variant">
             {loading ? 'Đang tải...' : `Tổng: ${total} lượt`}
           </span>
           {totalPages > 1 && (
-            <div className="flex items-center gap-2 text-sm">
-              <button
-                onClick={() => fetchLogs(page - 1)}
-                disabled={page <= 1}
-                className="px-2 py-1 rounded border disabled:opacity-40 hover:bg-gray-50"
-              >
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" onClick={() => fetchLogs(page - 1)} disabled={page <= 1}>
                 ‹ Trước
-              </button>
-              <span className="text-gray-600">
+              </Button>
+              <span className="text-sm text-on-surface-variant font-medium">
                 Trang {page}/{totalPages}
               </span>
-              <button
-                onClick={() => fetchLogs(page + 1)}
-                disabled={page >= totalPages}
-                className="px-2 py-1 rounded border disabled:opacity-40 hover:bg-gray-50"
-              >
+              <Button size="sm" variant="ghost" onClick={() => fetchLogs(page + 1)} disabled={page >= totalPages}>
                 Sau ›
-              </button>
+              </Button>
             </div>
           )}
         </div>
 
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-gray-50 text-left text-gray-500">
-              <th className="px-4 py-3 font-medium">Thời gian</th>
-              <th className="px-4 py-3 font-medium">Mã SV</th>
-              <th className="px-4 py-3 font-medium">Họ tên</th>
-              <th className="px-4 py-3 font-medium">Hướng</th>
-              <th className="px-4 py-3 font-medium">Độ tin cậy</th>
-              <th className="px-4 py-3 font-medium">Tòa nhà</th>
-            </tr>
-          </thead>
-          <tbody>
-            {logs.length === 0 && !loading ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
-                  Không có dữ liệu
-                </td>
-              </tr>
-            ) : (
-              logs.map((log) => (
-                <tr key={log.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                    {new Date(log.loggedAt).toLocaleString('vi-VN')}
-                  </td>
-                  <td className="px-4 py-3 font-mono">{log.studentCode}</td>
-                  <td className="px-4 py-3">{log.fullName ?? '—'}</td>
-                  <td className="px-4 py-3">{directionBadge(log.direction)}</td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {log.confidence != null
-                      ? `${(log.confidence * 100).toFixed(1)}%`
-                      : '—'}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">{log.buildingCode ?? '—'}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+        <Table
+          rows={logs}
+          getRowKey={(r) => r.id}
+          empty={<EmptyState icon="search_off" title="Không có dữ liệu" />}
+          columns={[
+            {
+              key: 'time',
+              header: 'Thời gian',
+              render: (r) => (
+                <span className="text-on-surface-variant font-medium whitespace-nowrap">
+                  {new Date(r.loggedAt).toLocaleString('vi-VN')}
+                </span>
+              ),
+            },
+            {
+              key: 'student',
+              header: 'Mã SV',
+              render: (r) => <span className="font-mono font-bold text-primary">{r.studentCode}</span>,
+            },
+            {
+              key: 'name',
+              header: 'Họ tên',
+              render: (r) => <span className="font-bold text-on-surface">{r.fullName ?? '—'}</span>,
+            },
+            {
+              key: 'dir',
+              header: 'Hướng',
+              render: (r) => (
+                <Badge tone={r.direction === 'IN' ? 'approved' : 'pending'}>
+                  {r.direction === 'IN' ? 'VÀO' : 'RA'}
+                </Badge>
+              ),
+            },
+            {
+              key: 'confidence',
+              header: 'Độ tin cậy',
+              render: (r) => (
+                <span className="text-on-surface-variant">
+                  {r.confidence != null ? `${(r.confidence * 100).toFixed(1)}%` : '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'building',
+              header: 'Tòa nhà',
+              render: (r) => <span className="text-on-surface-variant">{r.buildingCode ?? '—'}</span>,
+            },
+          ]}
+        />
+      </Card>
     </div>
   );
 }

@@ -1,14 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useFaceApi, extractDescriptor } from '../../../hooks/useFaceApi';
-import {
-  enrollFace,
-  deleteEnrollment,
-  getEnrolledStudents,
-  API_BASE,
-  authHeaders,
-} from '../../../lib/api';
+import { useEffect, useRef, useState } from 'react';
+import { useFaceApi, extractDescriptor } from '@/hooks/useFaceApi';
+import { enrollFace, deleteEnrollment, getEnrolledStudents, API_BASE, authHeaders } from '@/lib/api';
+import { Button, Card, EmptyState, Field, Input, PageHeader, Table } from '@/components/ui';
 
 interface EnrolledStudent {
   studentCode: string;
@@ -33,7 +28,7 @@ export default function FaceEnrollmentPage() {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    loadEnrolledList();
+    void loadEnrolledList();
   }, []);
 
   async function loadEnrolledList() {
@@ -52,8 +47,7 @@ export default function FaceEnrollmentPage() {
         cache: 'no-store',
       });
       if (res.ok) {
-        const data = await res.json();
-        setStudentInfo(data);
+        setStudentInfo(await res.json());
       } else {
         setStatus({ type: 'error', message: 'Không tìm thấy sinh viên.' });
       }
@@ -68,7 +62,7 @@ export default function FaceEnrollmentPage() {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        await videoRef.current.play();
       }
       setCameraOn(true);
     } catch {
@@ -118,142 +112,154 @@ export default function FaceEnrollmentPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold">Đăng ký khuôn mặt sinh viên</h1>
+    <div className="max-w-5xl mx-auto space-y-6">
+      <PageHeader
+        title="Đăng ký khuôn mặt sinh viên"
+        description="Trích xuất đặc trưng khuôn mặt qua camera để bật nhận diện cổng KTX."
+        icon={<span className="material-symbols-outlined">face</span>}
+      />
 
       {faceError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+        <div className="bg-error-container text-on-error-container px-6 py-4 rounded-2xl text-sm font-bold">
           {faceError}
         </div>
       )}
-
       {!isLoaded && !faceError && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg p-4">
-          Đang tải model nhận diện... (khoảng 6MB, chỉ tải một lần)
+        <div className="bg-primary-fixed/40 text-on-primary-fixed px-6 py-4 rounded-2xl text-sm font-medium">
+          Đang tải model nhận diện... (~6MB, chỉ tải một lần)
         </div>
       )}
 
-      {/* Enrollment form */}
-      <div className="bg-white border rounded-xl p-6 space-y-4">
-        <h2 className="font-semibold text-lg">Đăng ký mới</h2>
-
-        <div className="flex gap-3 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">Mã sinh viên</label>
-            <input
-              className="border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={studentCode}
-              onChange={(e) => setStudentCode(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && lookupStudent()}
-              placeholder="VD: SV001"
-            />
+      <Card padding="lg">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center">
+            <span className="material-symbols-outlined">person_add</span>
           </div>
-          <button
-            onClick={lookupStudent}
-            className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm font-medium"
-          >
+          <h2 className="text-base font-bold text-on-surface">Đăng ký mới</h2>
+        </div>
+
+        <div className="flex gap-3 items-end mb-4">
+          <div className="flex-1">
+            <Field label="Mã sinh viên">
+              <Input
+                value={studentCode}
+                onChange={(e) => setStudentCode(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && lookupStudent()}
+                placeholder="VD: SV001"
+              />
+            </Field>
+          </div>
+          <Button variant="secondary" onClick={lookupStudent}>
             Tìm kiếm
-          </button>
+          </Button>
         </div>
 
         {studentInfo && (
-          <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2 text-sm text-green-800">
+          <div className="bg-green-50 text-green-800 px-4 py-3 rounded-2xl text-sm font-medium mb-4">
             ✓ {(studentInfo as any).fullName ?? studentCode}
           </div>
         )}
 
         {!cameraOn ? (
-          <button
-            onClick={startCamera}
+          <Button
+            variant="gradient"
             disabled={!isLoaded || !studentCode.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            onClick={startCamera}
+            icon={<span className="material-symbols-outlined text-[18px]">videocam</span>}
           >
             Mở camera
-          </button>
+          </Button>
         ) : (
           <div className="space-y-3">
             <video
               ref={videoRef}
-              className="w-full max-w-sm rounded-xl border bg-black"
+              className="w-full max-w-sm rounded-2xl bg-black"
               style={{ transform: 'scaleX(-1)' }}
               muted
               playsInline
             />
             <div className="flex gap-3">
-              <button
+              <Button
+                variant="gradient"
+                loading={processing}
                 onClick={captureAndEnroll}
-                disabled={processing}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm font-medium"
+                icon={
+                  !processing ? <span className="material-symbols-outlined text-[18px]">photo_camera</span> : undefined
+                }
               >
                 {processing ? 'Đang xử lý...' : 'Chụp & Đăng ký'}
-              </button>
-              <button
-                onClick={stopCamera}
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm font-medium"
-              >
+              </Button>
+              <Button variant="secondary" onClick={stopCamera}>
                 Hủy
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
         {status.message && (
           <div
-            className={`rounded-lg p-3 text-sm ${
-              status.type === 'success'
-                ? 'bg-green-50 text-green-800 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
+            className={`mt-4 rounded-2xl px-4 py-3 text-sm font-medium ${
+              status.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-error-container text-on-error-container'
             }`}
           >
             {status.message}
           </div>
         )}
-      </div>
+      </Card>
 
-      {/* Enrolled list */}
-      <div className="bg-white border rounded-xl p-6">
-        <h2 className="font-semibold text-lg mb-4">
-          Danh sách đã đăng ký ({enrolledList.length})
-        </h2>
+      <Card padding="sm">
+        <div className="flex items-center justify-between px-2 py-3 mb-2">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-on-surface-variant">list</span>
+            <h2 className="text-base font-bold text-on-surface">Danh sách đã đăng ký</h2>
+          </div>
+          <span className="bg-primary-fixed text-on-primary-fixed px-3 py-0.5 rounded-full text-xs font-bold">
+            {enrolledList.length}
+          </span>
+        </div>
 
-        {enrolledList.length === 0 ? (
-          <p className="text-gray-500 text-sm">Chưa có sinh viên nào đăng ký khuôn mặt.</p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-gray-500">
-                <th className="pb-2 font-medium">Mã SV</th>
-                <th className="pb-2 font-medium">Họ tên</th>
-                <th className="pb-2 font-medium">Đăng ký lúc</th>
-                <th className="pb-2 font-medium">Cập nhật</th>
-                <th className="pb-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {enrolledList.map((s) => (
-                <tr key={s.studentCode} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="py-2 font-mono">{s.studentCode}</td>
-                  <td className="py-2">{s.fullName ?? '—'}</td>
-                  <td className="py-2 text-gray-500">
-                    {new Date(s.enrolledAt).toLocaleString('vi-VN')}
-                  </td>
-                  <td className="py-2 text-gray-500">
-                    {new Date(s.updatedAt).toLocaleString('vi-VN')}
-                  </td>
-                  <td className="py-2 text-right">
-                    <button
-                      onClick={() => handleDelete(s.studentCode)}
-                      className="text-red-500 hover:text-red-700 text-xs"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+        <Table
+          rows={enrolledList}
+          getRowKey={(r) => r.studentCode}
+          empty={<EmptyState icon="face" title="Chưa có sinh viên nào đăng ký khuôn mặt" />}
+          columns={[
+            {
+              key: 'code',
+              header: 'Mã SV',
+              render: (r) => <span className="font-mono font-bold text-primary">{r.studentCode}</span>,
+            },
+            {
+              key: 'name',
+              header: 'Họ tên',
+              render: (r) => <span className="font-bold text-on-surface">{r.fullName ?? '—'}</span>,
+            },
+            {
+              key: 'enrolled',
+              header: 'Đăng ký lúc',
+              render: (r) => (
+                <span className="text-on-surface-variant">{new Date(r.enrolledAt).toLocaleString('vi-VN')}</span>
+              ),
+            },
+            {
+              key: 'updated',
+              header: 'Cập nhật',
+              render: (r) => (
+                <span className="text-on-surface-variant">{new Date(r.updatedAt).toLocaleString('vi-VN')}</span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: '',
+              align: 'right',
+              render: (r) => (
+                <Button size="sm" variant="ghost" onClick={() => handleDelete(r.studentCode)} className="!text-error">
+                  Xóa
+                </Button>
+              ),
+            },
+          ]}
+        />
+      </Card>
     </div>
   );
 }
